@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package go.micro.srv.service;
+
+service Service {
+	rpc Call(Request) returns (Response) {}
+	rpc GetOne(UserRequest) returns (User) {}
+    rpc PutCache(CacheRequest) returns (CacheResponse) {}
+	rpc GetCache(CacheRequest) returns (CacheResponse) {}
+
+	rpc Stream(StreamingRequest) returns (stream StreamingResponse) {}
+	rpc PingPong(stream Ping) returns (stream Pong) {}
+}
+
+message Message {
+	map<string,string>  header = 1;
+	bytes  body = 2 ;
+}
+
+message Request {
+	string name = 1;
+}
+
+message Response {
+	string msg = 1;
+}
+
+
+message UserRequest {
+	string uid = 1;
+}
+
+message User {
+	string username = 1;
+	string avatar  =2 ;
+	string uid     =3 ;
+	int32  userType =4 ;
+}
+
+
+
+message CacheRequest {
+	string   key  =1;
+    string   value = 2;
+}
+
+
+message  CacheResponse {
+	string   value =1 ;
+}
+
+
+message StreamingRequest {
+	int64 count = 1;
+}
+
+message StreamingResponse {
+	int64 count = 1;
+}
+
+message Ping {
+	int64 stroke = 1;
+}
+
+message Pong {
+	int64 stroke = 1;
+}

@@ -1,0 +1,83 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "{{.Description}}",
+        "title": "微服务的api文档demo",
+        "contact": {},
+        "license": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8081",
+    "basePath": "/",
+    "paths": {
+        "/user/get_one": {
+            "post": {
+                "title": "获取用户信息",
+                "description": "获取用户信息 ",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "用户uid",
+                        "name": "uid",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.getOne"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/handler.User"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "handler.User": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "uid": {
+                    "type": "string"
+                },
+                "userType": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.getOne": {
+            "type": "object",
+            "required": [
+                "uid"
+            ],
+            "properties": {
+                "uid": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

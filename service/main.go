@@ -6,6 +6,7 @@ import (
 	"github.com/micro/go-micro/registry/consul"
 	ocplugin "github.com/micro/go-plugins/wrapper/trace/opentracing"
 	"github.com/opentracing/opentracing-go"
+	"joe-micro/lib/config"
 	"joe-micro/lib/log"
 	"joe-micro/lib/queue"
 	"joe-micro/lib/trace"
@@ -16,14 +17,13 @@ import (
 )
 
 func main() {
-	name := "go.micro.srv.service"
 
 	/************************************/
 	/********** 服务发现  cousul   ********/
 	/************************************/
 	reg := consul.NewRegistry(func(op *registry.Options) {
 		op.Addrs = []string{
-			"127.0.0.1:8500",
+			config.C.Consul,
 		}
 		op.Timeout =  5 * time.Second
 	})
@@ -35,7 +35,7 @@ func main() {
 	/********** 链路追踪  trace   ********/
 	/************************************/
 	trace.SetSamplingFrequency(50)
-	t, io, err := trace.NewTracer(name, "localhost:6831")
+	t, io, err := trace.NewTracer(config.C.Service.Name, config.C.Jaeger)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,17 +45,17 @@ func main() {
 	/************************************/
 	/********** 消息队列  queue   ********/
 	/************************************/
-	queue.Init("",nil,1,false)
+	queue.Init(config.C.Nsq.Address,config.C.Nsq.Lookup,config.C.Nsq.MaxInFlight,config.C.Debug)
 	subscriber.Registersubscriber()  //注册消费者
 
 
 	// New Service
 	service := micro.NewService(
-		micro.Name(name),
+		micro.Name(config.C.Service.Name),
 		micro.Registry(reg),
 		micro.RegisterTTL(time.Second*15),        //重新注册时间
 		micro.RegisterInterval(time.Second*10),   //注册过期时间
-		micro.Version("latest"),
+		micro.Version(config.C.Service.Version),
 		micro.WrapHandler(ocplugin.NewHandlerWrapper(opentracing.GlobalTracer())),
 
 	)

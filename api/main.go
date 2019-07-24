@@ -1,5 +1,6 @@
 package main
 
+import "C"
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/micro/go-micro/registry"
@@ -8,6 +9,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 	_ "joe-micro/api/docs"
 	"joe-micro/api/handler"
+	"joe-micro/lib/config"
 	"joe-micro/lib/log"
 	"joe-micro/lib/queue"
 	"joe-micro/lib/trace"
@@ -24,15 +26,15 @@ func main() {
 	/************************************/
 	reg := consul.NewRegistry(func(op *registry.Options) {
 		op.Addrs = []string{
-			"127.0.0.1:8500",
+			config.C.Consul,
 		}
 	})
 	// create new api service
 	service := web.NewService(
-		web.Name("go.micro.api.api"),
+		web.Name(config.C.Service.Name),
 		web.Registry(reg),
-		web.Version("latest"),
-		web.Address(":8081"),
+		web.Version(config.C.Service.Version),
+		web.Address(config.C.Service.Port),
 	)
 
 	// initialise service
@@ -45,7 +47,7 @@ func main() {
 	/********** 链路追踪  trace   ********/
 	/************************************/
 	trace.SetSamplingFrequency(50)
-	t, io, err := trace.NewTracer("go.micro.api.api", "localhost:6831")
+	t, io, err := trace.NewTracer(config.C.Service.Name, config.C.Jaeger)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -56,7 +58,7 @@ func main() {
 	/************************************/
 	/********** 消息队列  queue   ********/
 	/************************************/
-	queue.Init("",nil,1,false)
+	queue.Init(config.C.Nsq.Address,config.C.Nsq.Lookup,config.C.Nsq.MaxInFlight,config.C.Debug)
 
 
 
@@ -80,8 +82,11 @@ func main() {
 			ctx.JSON(200, nil)
 		}
 	})
+
+	//swagger
 /*	url := ginSwagger.URL("http://localhost:8081/swagger/doc.json") // The url pointing to API definition
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))*/
+
 	r := router.Group("/user")
 	r.GET("/test", handler.Anything)
 

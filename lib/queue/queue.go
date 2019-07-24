@@ -5,6 +5,7 @@ import (
 	"joe-micro/lib/log"
 	"os"
 	"os/signal"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -21,18 +22,12 @@ var consumers []*nsq.Consumer
 var config  *nsq.Config
 
 
-func Init(addrNsq string , addrNsqLookup []string, maxInFlight int,debug bool) {
+func Init(addrNsq string , addrNsqLookup string, maxInFlight int,debug bool) {
 	log.Info(" nsq  链接中。。。")
 	if  addrNsq==""{
 		addrNsq="127.0.0.1:4150"
 	}
-	if  len(addrNsqLookup)==0 {
-		addrNsqLookups = []string{
-			"127.0.0.1:4161",
-		}
-	}else{
-		addrNsqLookups =addrNsqLookup
-	}
+	addrNsqLookups = strings.Split(addrNsqLookup, ",")
 	config =  nsq.NewConfig()
 	config.MaxInFlight=maxInFlight
 	p, err := nsq.NewProducer(addrNsq, config)

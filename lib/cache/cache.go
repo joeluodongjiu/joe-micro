@@ -1,8 +1,10 @@
 package cache
 
 import (
+	"fmt"
 	cache2 "github.com/astaxie/beego/cache"
 	_ "github.com/astaxie/beego/cache/redis"
+	"joe-micro/lib/config"
 	"joe-micro/lib/log"
 )
 
@@ -12,7 +14,8 @@ var  Cache  cache2.Cache
 func init() {
 	log.Info("redis  链接中。。。")
     var err error
-	Cache ,err =cache2.NewCache("redis",`{"key":"userService","conn":"192.168.0.162:6379","dbNum":"12","password":"DareJoejoe"}`)
+	Cache ,err =cache2.NewCache("redis",fmt.Sprintf(`{"key":"%v","conn":"%v","dbNum":"%v","password":"%v"}`,
+		config.C.Redis.Key,config.C.Redis.Host+":"+config.C.Redis.Port,config.C.Redis.Db,config.C.Redis.Auth))
 	if err!=nil {
 		log.Fatal(err)
 	}

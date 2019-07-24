@@ -9,31 +9,51 @@ import (
 
 // 使用者根据自己需要修改这个结构体
 var C struct {
-	RunMode string  `yaml:"runMode"`
-	Mysql struct {
-		Bamboo   string `yaml:"bamboo_website"`
-		DsnRead  string `yaml:"dsn_read"`
-		DsnWrite string `yaml:"dsn_wirte"`
-	} `yaml:"mysql"`
-	Redis  struct{
+	Debug  bool  `yaml:"debug"`
 
+	Service  struct {
+		Name    string    `yaml:"name"`
+		Port    string     `yaml:"port"`
+		Version  string      `yaml:"version"`
 	}
-	HttpAddr  string `yaml:"http_addr"`
+
+	Mysql struct {
+		Address      string `yaml:"address"`
+		Port         int    `yaml:"port"`
+		UserName     string `yaml:"username"`
+		Password string `yaml:"password"`
+		DbName       string `yaml:"db_name"`
+	} `yaml:"mysql"`
+
+
+	Redis struct{
+		Key   string   `yaml:"key"`
+		Host string `yaml:"host"`
+		Port  string    `yaml:"port"`
+		Auth  string     `yaml:"auth"`
+		Db    int         `yaml:"db"`
+	}   `yaml:"redis"`
+
+	Consul  string   `yaml:"consul"`
+
+	Jaeger  string   `yaml:"jaeger"`
+
+	Nsq  struct{
+		Address      string `yaml:"address"`
+		Lookup      string   `yaml:"lookup"`
+		MaxInFlight  int     `yaml:"maxInFlight"`
+	}  `yaml:"nsq"`
 }
 
 func init() {
-	configFileName := "config.yml"
-	configFileNameBack := "config_debug.yml"
-	var findConfig, findConfigBack bool
-	// 向上层查找配置文件
-	// 在项目的任何地方运行(test时)都能加载到配置文件
-	// 有备配置文件, 当主配置文件没找到时就会使用备配置文件
-	// 优先使用最近的主备配置文件
+	configFileName := "config.yaml"
+	var findConfig bool
+
 	for i := 0; i < 10; i++ {
 		_, err := os.Stat(configFileName)
 		if err != nil {
 			if os.IsNotExist(err) {
-				configFileName = "../" + configFileName
+				configFileName = "./" + configFileName
 			} else {
 				panic(err)
 			}
@@ -41,27 +61,13 @@ func init() {
 			findConfig = true
 			break
 		}
-
-		_, err = os.Stat(configFileNameBack)
-		if err != nil {
-			if os.IsNotExist(err) {
-				configFileNameBack = "../" + configFileNameBack
-			} else {
-				panic(err)
-			}
-		} else {
-			findConfigBack = true
-			break
-		}
 	}
 
 	var fileName string
 	if findConfig {
 		fileName = configFileName
-	} else if findConfigBack {
-		fileName = configFileNameBack
-	} else {
-		log.Panicf("can't find 'config.yml' or 'config_debug.yml'")
+	}  else {
+		log.Panicf("can't find 'config.yml' ")
 		return
 	}
 

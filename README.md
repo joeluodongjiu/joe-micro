@@ -31,6 +31,15 @@
 
 ```
 
+##
+启动rpc服务
+```
+go run ./service/main.go
+```
+启动api服务
+```
+go run ./api/main.go
+```
 
 ##  TODO
 

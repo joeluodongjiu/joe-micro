@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b118e0c1-c8fb-4837-acdd-354376bee143" name="Default Changelist" comment="" />
+    <list default="true" id="b118e0c1-c8fb-4837-acdd-354376bee143" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,8 +16,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/handler/handler.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-241">
-              <caret line="129" column="9" selection-start-line="129" selection-start-column="9" selection-end-line="129" selection-end-column="9" />
+            <state relative-caret-position="464">
+              <caret line="176" column="31" selection-start-line="176" selection-start-column="31" selection-end-line="176" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -22,7 +25,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/service/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="63">
+            <state relative-caret-position="111">
               <caret line="54" column="28" selection-start-line="54" selection-start-column="28" selection-end-line="54" selection-end-column="28" />
               <folding>
                 <element signature="e#14#418#0" expanded="true" />
@@ -36,7 +39,7 @@
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
               <first_editor relative-caret-position="300">
-                <caret line="20" column="16" lean-forward="true" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
+                <caret line="20" column="16" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
               </first_editor>
               <second_editor />
             </state>
@@ -52,8 +55,8 @@
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="195">
-                <caret line="13" column="18" selection-start-line="13" selection-start-column="18" selection-end-line="13" selection-end-column="18" />
+              <first_editor>
+                <caret column="1" selection-start-column="1" selection-end-column="24" />
               </first_editor>
               <second_editor />
             </state>
@@ -61,32 +64,27 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../pkg/mod/github.com/micro/go-plugins@v1.1.1/broker/nsq/nsq.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="426">
-              <caret line="276" column="32" selection-start-line="276" selection-start-column="31" selection-end-line="276" selection-end-column="32" />
-              <folding>
-                <element signature="e#51#271#0" expanded="true" />
-                <element signature="e#4810#5057#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/service/subscriber/service.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="358">
-              <caret line="35" column="14" selection-start-line="35" selection-start-column="14" selection-end-line="35" selection-end-column="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="409">
-              <caret line="58" column="13" selection-start-line="58" selection-start-column="13" selection-end-line="58" selection-end-column="13" />
+            <state relative-caret-position="287">
+              <caret line="52" column="34" selection-start-line="52" selection-start-column="34" selection-end-line="52" selection-end-column="34" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/api/Dockerfile">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/config/config.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="381">
+              <caret line="73" column="5" selection-start-line="73" selection-start-column="5" selection-end-line="73" selection-end-column="5" />
+              <folding>
+                <element signature="e#16#72#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -222,11 +220,6 @@
             <path>
               <item name="joe-micro" type="b2602c69:ProjectViewProjectNode" />
               <item name="joe-micro" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="joe-micro" type="b2602c69:ProjectViewProjectNode" />
-              <item name="joe-micro" type="462c0819:PsiDirectoryNode" />
-              <item name="service" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="joe-micro" type="b2602c69:ProjectViewProjectNode" />
@@ -367,7 +360,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="982" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.27635783" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -382,7 +374,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" visible="true" weight="0.38089886" />
+      <window_info anchor="bottom" id="Terminal" order="10" visible="true" weight="0.28314605" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -419,13 +411,6 @@
     <proxy>https://goproxy.io</proxy>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../github.com/micro/go-micro/broker/broker.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="18" column="23" selection-start-line="18" selection-start-column="18" selection-end-line="18" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/service/proto/service/service.micro.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="470">
@@ -689,9 +674,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api/Dockerfile">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../pkg/mod/github.com/nsqio/go-nsq@v1.0.7/api_request.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="666">
@@ -738,20 +720,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api/handler/handler.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-241">
-          <caret line="129" column="9" selection-start-line="129" selection-start-column="9" selection-end-line="129" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/api/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="409">
-          <caret line="58" column="13" selection-start-line="58" selection-start-column="13" selection-end-line="58" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lib/queue/queue.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="386">
@@ -772,6 +740,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/api/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="287">
+          <caret line="52" column="34" selection-start-line="52" selection-start-column="34" selection-end-line="52" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api/Dockerfile">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/config/config.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="381">
+          <caret line="73" column="5" selection-start-line="73" selection-start-column="5" selection-end-line="73" selection-end-column="5" />
+          <folding>
+            <element signature="e#16#72#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/go.sum">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -779,7 +767,7 @@
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="300">
-            <caret line="20" column="16" lean-forward="true" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
+            <caret line="20" column="16" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
           </first_editor>
           <second_editor />
         </state>
@@ -787,7 +775,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/service/main.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="63">
+        <state relative-caret-position="111">
           <caret line="54" column="28" selection-start-line="54" selection-start-column="28" selection-end-line="54" selection-end-column="28" />
           <folding>
             <element signature="e#14#418#0" expanded="true" />
@@ -795,11 +783,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/api/handler/handler.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="464">
+          <caret line="176" column="31" selection-start-line="176" selection-start-column="31" selection-end-line="176" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="195">
-            <caret line="13" column="18" selection-start-line="13" selection-start-column="18" selection-end-line="13" selection-end-column="18" />
+          <first_editor>
+            <caret column="1" selection-start-column="1" selection-end-column="24" />
           </first_editor>
           <second_editor />
         </state>

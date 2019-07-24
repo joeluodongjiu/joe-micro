@@ -33,5 +33,5 @@ jaeger:  127.0.0.1:6831
 # nsq 配置
 nsq:
   address: 127.0.0.1:4150
-  lookup:
-  maxInFlight:
+  lookup: 127.0.0.1:4161
+  maxInFlight: 1

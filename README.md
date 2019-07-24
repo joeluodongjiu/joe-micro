@@ -32,5 +32,5 @@
 
 ##  TODO
 
-casbin          权限管理
-docker-compose  集群启动
+- casbin          权限管理
+- docker-compose  集群启动

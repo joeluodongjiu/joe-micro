@@ -19,17 +19,16 @@ var logLevel nsq.LogLevel
 
 var consumers []*nsq.Consumer
 
-var config  *nsq.Config
+var config *nsq.Config
 
-
-func Init(addrNsq string , addrNsqLookup string, maxInFlight int,debug bool) {
+func Init(addrNsq string, addrNsqLookup string, maxInFlight int) {
 	log.Info(" nsq  链接中。。。")
-	if  addrNsq==""{
-		addrNsq="127.0.0.1:4150"
+	if addrNsq == "" {
+		addrNsq = "127.0.0.1:4150"
 	}
 	addrNsqLookups = strings.Split(addrNsqLookup, ",")
-	config =  nsq.NewConfig()
-	config.MaxInFlight=maxInFlight
+	config = nsq.NewConfig()
+	config.MaxInFlight = maxInFlight
 	p, err := nsq.NewProducer(addrNsq, config)
 	if err != nil {
 		log.Fatal(err)
@@ -37,9 +36,6 @@ func Init(addrNsq string , addrNsqLookup string, maxInFlight int,debug bool) {
 	}
 
 	logLevel = nsq.LogLevelWarning
-	if debug {
-		logLevel = nsq.LogLevelInfo
-	}
 
 	p.SetLogger(log.NsqLogger(), logLevel)
 	producer = p
@@ -64,12 +60,6 @@ func Publish(topic string, body []byte, delay ...time.Duration) (err error) {
 	}
 	return
 }
-
-
-
-
-
-
 
 func Subscribe(topic string, channel string, handler nsq.Handler) (err error) {
 	c, err := nsq.NewConsumer(topic, channel, config)

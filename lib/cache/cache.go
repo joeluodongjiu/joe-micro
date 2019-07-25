@@ -8,21 +8,18 @@ import (
 	"joe-micro/lib/log"
 )
 
-var  Cache  cache2.Cache
-
+var Cache cache2.Cache
 
 func init() {
 	log.Info("redis  链接中。。。")
-    var err error
-	Cache ,err =cache2.NewCache("redis",fmt.Sprintf(`{"key":"%v","conn":"%v","dbNum":"%v","password":"%v"}`,
-		config.C.Redis.Key,config.C.Redis.Host+":"+config.C.Redis.Port,config.C.Redis.Db,config.C.Redis.Auth))
-	if err!=nil {
+	var err error
+	Cache, err = cache2.NewCache("redis", fmt.Sprintf(`{"key":"%v","conn":"%v","dbNum":"%v","password":"%v"}`,
+		config.C.Redis.Key, config.C.Redis.Host+":"+config.C.Redis.Port, config.C.Redis.Db, config.C.Redis.Auth))
+	if err != nil {
 		log.Fatal(err)
 	}
 	log.Info("redis链接成功")
 }
-
-
 
 // GetString convert interface to string.
 func GetString(v interface{}) string {

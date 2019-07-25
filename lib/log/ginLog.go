@@ -6,7 +6,7 @@ import (
 )
 
 func GinLogger() gin.HandlerFunc {
-	return func (c *gin.Context) {
+	return func(c *gin.Context) {
 		// 开始时间
 		start := time.Now()
 		// 处理请求
@@ -29,5 +29,3 @@ func GinLogger() gin.HandlerFunc {
 		)
 	}
 }
-
-

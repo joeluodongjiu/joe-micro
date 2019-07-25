@@ -1,48 +1,47 @@
 package config
 
 import (
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
 	"os"
-	"gopkg.in/yaml.v2"
 )
 
 // 使用者根据自己需要修改这个结构体
 var C struct {
-	Debug  bool  `yaml:"debug"`
+	Debug bool `yaml:"debug"`
 
-	Service  struct {
-		Name    string    `yaml:"name"`
-		Port    string     `yaml:"port"`
-		Version  string      `yaml:"version"`
+	Service struct {
+		Name    string `yaml:"name"`
+		Port    string `yaml:"port"`
+		Version string `yaml:"version"`
 	}
 
 	Mysql struct {
-		Address      string `yaml:"address"`
-		Port         int    `yaml:"port"`
-		UserName     string `yaml:"username"`
+		Address  string `yaml:"address"`
+		Port     int    `yaml:"port"`
+		UserName string `yaml:"username"`
 		Password string `yaml:"password"`
-		DbName       string `yaml:"db_name"`
+		DbName   string `yaml:"db_name"`
 	} `yaml:"mysql"`
 
-
-	Redis struct{
-		Key   string   `yaml:"key"`
+	Redis struct {
+		Key  string `yaml:"key"`
 		Host string `yaml:"host"`
-		Port  string    `yaml:"port"`
-		Auth  string     `yaml:"auth"`
-		Db    int         `yaml:"db"`
-	}   `yaml:"redis"`
+		Port string `yaml:"port"`
+		Auth string `yaml:"auth"`
+		Db   int    `yaml:"db"`
+	} `yaml:"redis"`
 
-	Consul  string   `yaml:"consul"`
+	Consul string `yaml:"consul"`
 
-	Jaeger  string   `yaml:"jaeger"`
+	Jaeger string `yaml:"jaeger"`
 
-	Nsq  struct{
-		Address      string `yaml:"address"`
-		Lookup      string   `yaml:"lookup"`
-		MaxInFlight  int     `yaml:"maxInFlight"`
-	}  `yaml:"nsq"`
+	Nsq struct {
+		Address     string `yaml:"address"`
+		Lookup      string `yaml:"lookup"`
+		MaxInFlight int    `yaml:"maxInFlight"`
+	} `yaml:"nsq"`
 }
 
 func init() {
@@ -66,7 +65,7 @@ func init() {
 	var fileName string
 	if findConfig {
 		fileName = configFileName
-	}  else {
+	} else {
 		log.Panicf("can't find 'config.yml' ")
 		return
 	}

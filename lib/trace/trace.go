@@ -3,16 +3,16 @@ package trace
 import (
 	"context"
 	"github.com/gin-gonic/gin"
+	"github.com/micro/go-micro/metadata"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 	"github.com/uber/jaeger-client-go"
-	jaegercfg  "github.com/uber/jaeger-client-go/config"
+	jaegercfg "github.com/uber/jaeger-client-go/config"
 	"io"
-	"github.com/micro/go-micro/metadata"
+	"joe-micro/lib/log"
 	"math/rand"
 	"net/http"
 	"time"
-	"joe-micro/lib/log"
 )
 
 const contextTracerKey = "Tracer-context"
@@ -75,7 +75,6 @@ func ContextWithSpan(c *gin.Context) (ctx context.Context, ok bool) {
 	return
 }
 
-
 // NewTracer 创建一个jaeger Tracer
 func NewTracer(servicename string, addr string) (opentracing.Tracer, io.Closer, error) {
 	cfg := jaegercfg.Configuration{
@@ -103,7 +102,3 @@ func NewTracer(servicename string, addr string) (opentracing.Tracer, io.Closer, 
 
 	return tracer, closer, err
 }
-
-
-
-

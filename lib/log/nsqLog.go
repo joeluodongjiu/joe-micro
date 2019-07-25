@@ -18,10 +18,12 @@ func (l *NsqLoggerI) Output(calldepth int, s string) error {
 	switch level {
 	case "INF":
 		l.logger.Info(s)
+	case "WRN":
+		l.logger.Warn(s)
 	case "ERR":
 		l.logger.Error(s)
 	default:
-		l.logger.Info(s)
+		l.logger.Debug(s)
 	}
 	return nil
 }

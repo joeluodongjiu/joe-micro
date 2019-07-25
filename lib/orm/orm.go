@@ -10,17 +10,8 @@ import (
 
 var db *gorm.DB
 
-
-
-/*host: 192.168.0.162
-user: root
-pwd:  gogocuri
-dbname: wanqu2
-port: 3306*/
-
 func init() {
 	log.Info("mysql  链接中。。。")
-
 
 	var err error
 	db, err = gorm.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
@@ -37,6 +28,7 @@ func init() {
 	//连接池
 	db.DB().SetMaxIdleConns(50)
 	db.DB().SetMaxOpenConns(200)
+
 	log.Info("mysql 链接成功")
 }
 

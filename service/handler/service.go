@@ -18,15 +18,14 @@ func (e *Service) Call(ctx context.Context, req *service.Request, rsp *service.R
 	return nil
 }
 
-
 // Call is a single request handler called via client.Call or the generated client code
 func (e *Service) GetOne(ctx context.Context, req *service.UserRequest, rsp *service.User) (err error) {
 	// simulate opentracing instrumentation of an SQL query
 
-	log.Info("Received Service.GetOne request",)
+	log.Info("Received Service.GetOne request", )
 	var user model.User
-	user,err = model.GetByID(req.Uid)
-	if err!=nil {
+	user, err = model.GetByID(req.Uid)
+	if err != nil {
 		log.Warn(err.Error())
 		return err
 	}
@@ -37,28 +36,23 @@ func (e *Service) GetOne(ctx context.Context, req *service.UserRequest, rsp *ser
 	return nil
 }
 
-
 // Call is a single request handler called via client.Call or the generated client code
 func (e *Service) PutCache(ctx context.Context, req *service.CacheRequest, rsp *service.CacheResponse) error {
 	log.Info("Received Service.PutCache request")
-	err:=cache.Cache.Put(req.Key,req.Value,50*time.Second)
-	if err!=nil {
+	err := cache.Cache.Put(req.Key, req.Value, 50*time.Second)
+	if err != nil {
 		log.Error(err)
 		return err
 	}
-	rsp.Value="成功"
+	rsp.Value = "成功"
 	return nil
 }
 
 // Call is a single request handler called via client.Call or the generated client code
 func (e *Service) GetCache(ctx context.Context, req *service.CacheRequest, rsp *service.CacheResponse) error {
-	rsp.Value =cache.GetString(cache.Cache.Get(req.Key))
+	rsp.Value = cache.GetString(cache.Cache.Get(req.Key))
 	return nil
 }
-
-
-
-
 
 // Stream is a server side stream handler called via client.Stream or the generated client code
 func (e *Service) Stream(ctx context.Context, req *service.StreamingRequest, stream service.Service_StreamStream) error {

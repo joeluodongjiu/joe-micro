@@ -6,6 +6,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"joe-micro/lib/config"
 	"joe-micro/lib/log"
+	"time"
 )
 
 var db *gorm.DB
@@ -35,4 +36,12 @@ func init() {
 //get db
 func GetDB() *gorm.DB {
 	return db
+}
+
+
+type CommonModel struct {
+	ID        int `gorm:"Column:id;primary_key"`
+	CreatedAt time.Time  `gorm:"Column:createAt"`
+	UpdatedAt time.Time   `gorm:"Column:createAt"`
+	DeletedAt *time.Time  `gorm:"Column:createAt" sql:"index"`
 }

@@ -1,7 +1,6 @@
 package log
 
 import (
-	"github.com/sirupsen/logrus"
 	"strings"
 )
 
@@ -9,25 +8,23 @@ import (
 // 1. 不关心caller
 // 2. level需要处理
 
-type NsqLoggerI struct {
-	logger *logrus.Logger
-}
+type NsqLoggerI struct {}
 
 func (l *NsqLoggerI) Output(calldepth int, s string) error {
 	level := strings.Split(s, " ")[0]
 	switch level {
 	case "INF":
-		l.logger.Info(s)
+		withCaller(2).Info(s)
 	case "WRN":
-		l.logger.Warn(s)
+		withCaller(2).Warn(s)
 	case "ERR":
-		l.logger.Error(s)
+		withCaller(2).Error(s)
 	default:
-		l.logger.Debug(s)
+		withCaller(2).Debug(s)
 	}
 	return nil
 }
 
 func NsqLogger() *NsqLoggerI {
-	return &NsqLoggerI{logger: logger}
+	return &NsqLoggerI{}
 }

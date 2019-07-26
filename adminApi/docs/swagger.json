@@ -1,0 +1,13 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "{{.Description}}",
+        "title": "微服务的管理端api文档demo",
+        "contact": {},
+        "license": {},
+        "version": "1.0"
+    },
+    "host": "localhost:9081",
+    "basePath": "/",
+    "paths": {}
+}

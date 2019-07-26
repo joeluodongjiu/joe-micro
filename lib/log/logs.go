@@ -65,6 +65,14 @@ import (
 	"time"
 )
 
+// 定义键名
+const (
+	TraceIDKey     = "trace_id"
+	UserIDKey      = "user_id"
+	VersionKey     = "version"
+	ServiceNameKey = "service_name"
+)
+
 var logger *logrus.Logger
 
 // debug: 使用text格式, Level是Debug, 打印所有级别
@@ -85,17 +93,53 @@ func SetDebug(d bool) {
 }
 
 func WithField(key string, value interface{}) *logrus.Entry {
-	return withCaller().WithField(key, value)
+	return withCaller(2).WithField(key, value)
 }
 
 func WithFields(fs logrus.Fields) *logrus.Entry {
-	return withCaller().WithFields(fs)
+	return withCaller(2).WithFields(fs)
 }
 
-func withCaller() *logrus.Entry {
+//todo 加入traceId 和 uid 日志染色追踪
+/*func StartSpan(ctx context.Context, ) *logrus.Entry {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	fields := map[string]interface{}{
+		UserIDKey:       fromUserIDContext(ctx),
+		TraceIDKey:      fromTraceIDContext(ctx),
+		VersionKey:      config.C.Service.Version,
+		ServiceNameKey:   config.C.Service.Name,
+	}
+
+	return  logger.WithFields(fields)
+}
+
+
+func fromUserIDContext(ctx context.Context) string {
+	v := ctx.Value(UserIDKey)
+	if v != nil {
+		if s, ok := v.(string); ok {
+			return s
+		}
+	}
+	return ""
+}
+
+func fromTraceIDContext(ctx context.Context) string {
+	v := ctx.Value(TraceIDKey)
+	if v != nil {
+		if s, ok := v.(string); ok {
+			return s
+		}
+	}
+	return ""
+}*/
+
+func withCaller(skip int) *logrus.Entry {
 	var key = "caller"
 	var value interface{}
-	value = fmt.Sprintf("%+v", stack.Caller(2))
+	value = fmt.Sprintf("%+v", stack.Caller(skip))
 	return logger.WithFields(logrus.Fields{key: value})
 }
 
@@ -108,43 +152,43 @@ func withCaller() *logrus.Entry {
 - debug：没问题，就看看堆栈*/
 
 func Fatal(args ...interface{}) {
-	withCaller().Fatal(args...)
+	withCaller(2).Fatal(args...)
 }
 
 func Fatalf(format string, args ...interface{}) {
-	withCaller().Fatalf(format, args...)
+	withCaller(2).Fatalf(format, args...)
 }
 
 func Error(args ...interface{}) {
-	withCaller().Error(args...)
+	withCaller(2).Error(args...)
 }
 
 func Errorf(format string, args ...interface{}) {
-	withCaller().Errorf(format, args...)
+	withCaller(2).Errorf(format, args...)
 }
 
 func Warn(args ...interface{}) {
-	withCaller().Warn(args...)
+	withCaller(2).Warn(args...)
 }
 
 func Warnf(format string, args ...interface{}) {
-	withCaller().Warnf(format, args...)
+	withCaller(2).Warnf(format, args...)
 }
 
 func Info(args ...interface{}) {
-	withCaller().Info(args...)
+	withCaller(2).Info(args...)
 }
 
 func Infof(format string, args ...interface{}) {
-	withCaller().Infof(format, args...)
+	withCaller(2).Infof(format, args...)
 }
 
 func Debug(args ...interface{}) {
-	withCaller().Debug(args...)
+	withCaller(2).Debug(args...)
 }
 
 func Debugf(format string, args ...interface{}) {
-	withCaller().Debugf(format, args...)
+	withCaller(2).Debugf(format, args...)
 }
 
 // 输出日志到es

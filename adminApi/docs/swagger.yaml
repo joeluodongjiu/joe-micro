@@ -1,0 +1,10 @@
+basePath: /
+host: localhost:9081
+info:
+  contact: {}
+  description: '{{.Description}}'
+  license: {}
+  title: 微服务的管理端api文档demo
+  version: "1.0"
+paths: {}
+swagger: "2.0"

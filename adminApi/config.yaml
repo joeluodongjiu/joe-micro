@@ -3,8 +3,8 @@ debug: true
 
 # 项目配置
 service:
-  name: go.micro.api.api
-  port: :8081
+  name: go.micro.web.adminApi
+  port: :9081
   version: latest
 
 
@@ -25,7 +25,7 @@ redis:
 
 
 # consul 配置
-consul: 127.0.0.1:8500
+consul: 127.0.0.1:8300
 
 # jaeger 配置
 jaeger:  127.0.0.1:6831

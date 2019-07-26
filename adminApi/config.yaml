@@ -1,0 +1,37 @@
+# 启动模式
+debug: true
+
+# 项目配置
+service:
+  name: go.micro.api.api
+  port: :8081
+  version: latest
+
+
+# mysql配置
+mysql:
+  username : root
+  port : 3306
+  password : gogocuri
+  db_name : wanqu2
+  address : 192.168.0.162
+
+# redis 配置
+redis:
+  host: 192.168.0.162
+  port: 6379
+  auth: DareJoejoe
+  db:  12
+
+
+# consul 配置
+consul: 127.0.0.1:8500
+
+# jaeger 配置
+jaeger:  127.0.0.1:6831
+
+# nsq 配置
+nsq:
+  address: 127.0.0.1:4150
+  lookup: 127.0.0.1:4161
+  maxInFlight: 1

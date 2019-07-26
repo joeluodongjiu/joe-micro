@@ -38,10 +38,14 @@ func GetDB() *gorm.DB {
 	return db
 }
 
+//是否查询成功
+func  IsFound(err error) bool{
+	return !gorm.IsRecordNotFoundError(err)
+}
 
 type CommonModel struct {
 	ID        int `gorm:"Column:id;primary_key"`
-	CreatedAt time.Time  `gorm:"Column:createAt"`
-	UpdatedAt time.Time   `gorm:"Column:createAt"`
-	DeletedAt *time.Time  `gorm:"Column:createAt" sql:"index"`
+	CreateAt time.Time  `gorm:"Column:createAt"`
+	UpdateAt time.Time   `gorm:"Column:updatedAt"`
+	DeleteAt *time.Time  `gorm:"Column:deleteAt" sql:"index"`
 }

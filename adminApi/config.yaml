@@ -13,7 +13,7 @@ mysql:
   username : root
   port : 3306
   password : gogocuri
-  db_name : wanqu2
+  db_name : rbac
   address : 192.168.0.162
 
 # redis 配置

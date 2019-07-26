@@ -7,7 +7,6 @@ service Service {
 	rpc GetOne(UserRequest) returns (User) {}
     rpc PutCache(CacheRequest) returns (CacheResponse) {}
 	rpc GetCache(CacheRequest) returns (CacheResponse) {}
-
 	rpc Stream(StreamingRequest) returns (stream StreamingResponse) {}
 	rpc PingPong(stream Ping) returns (stream Pong) {}
 }

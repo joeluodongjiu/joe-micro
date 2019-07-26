@@ -3,7 +3,7 @@ package handler
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"joe-micro/adminApi/middleware/jwt"
+	"joe-micro/lib/jwt"
 	"joe-micro/adminApi/model"
 	"joe-micro/lib/toolfunc"
 )
@@ -25,19 +25,19 @@ func Login(c *gin.Context) {
 
 	//获取用户记录
 	userM, has ,err  := model.GetByUsername(res.Username)
-	if has {
+	if !has {
 		c.JSON(200,gin.H{
 			"code": 2,
 			"msg":  "账号不存在",
 		})
-		c.Abort()
+		return
 	}
 	if err != nil {
 		c.JSON(200, gin.H{
 			"code": -1,
 			"msg":  fmt.Sprintf("服务器错误 %v", err),
 		})
-		c.Abort()
+		return
 	}
 
     //校验密码
@@ -46,7 +46,7 @@ func Login(c *gin.Context) {
 			"code": 2,
 			"msg":  "密码错误",
 		})
-		c.Abort()
+		return
 	}
 
 	//颁发token
@@ -56,7 +56,7 @@ func Login(c *gin.Context) {
 			"code": -1,
 			"msg":  fmt.Sprintf("服务器错误 %v", err),
 		})
-		c.Abort()
+		return
 	}
 
 

@@ -35,6 +35,6 @@ func JWTAuth(skipper ...SkipperFunc) gin.HandlerFunc {
 			return
 		}
 		// 继续交由下一个路由处理,并将解析出的信息传递下去
-		c.Set("uid", claims.UID)
+		c.Set("UID", claims.UID)
 	}
 }

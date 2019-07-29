@@ -7,14 +7,18 @@ import (
 // NoMethodHandler 未找到请求方法的处理函数
 func NoMethodHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(405, gin.H{"message": "方法不被允许"})
+		c.JSON(405, gin.H{"code":2,"msg": "方法不被允许"})
+		c.Abort()
+		return
 	}
 }
 
 // NoRouteHandler 未找到请求路由的处理函数
 func NoRouteHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(500, gin.H{"message": "未找到请求路由的处理函数"})
+		c.JSON(404, gin.H{"code":2,"msg": "未找到请求路由的处理函数"})
+		c.Abort()
+		return
 	}
 }
 

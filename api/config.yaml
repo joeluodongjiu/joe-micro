@@ -9,6 +9,7 @@ service:
 
 #jwt key
 signKey: api
+timeOut: 10
 
 
 # mysql配置

@@ -33,6 +33,15 @@ func main() {
 		}
 
 	})
+
+
+	/************************************/
+	/********** gin  路由框架     ********/
+	/************************************/
+	//注册 gin  routers
+	ginHandler :=routers.Init()
+
+
 	// create new api service
 	service := web.NewService(
 		web.Name(config.C.Service.Name),
@@ -41,6 +50,7 @@ func main() {
 		web.RegisterInterval(time.Second*10), //注册过期时间
 		web.Version(config.C.Service.Version),
 		web.Address(config.C.Service.Port),
+		web.Handler(ginHandler),
 	)
 
 	// initialise service
@@ -67,11 +77,7 @@ func main() {
 		log.Error(err.Error())
 	}
 
-	/************************************/
-	/********** gin  路由框架     ********/
-	/************************************/
-	//注册 gin  routers
-	service.Handle("/", routers.Init())
+
 
 	// run service
 	if err := service.Run(); err != nil {

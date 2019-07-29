@@ -2,30 +2,30 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
+	"joe-micro/adminApi/handler"
 	"joe-micro/adminApi/middleware"
 	"joe-micro/lib/log"
 	"joe-micro/lib/trace"
-	"joe-micro/adminApi/handler"
 )
 
 func Init() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode) //是否生产模式启动
 	router := gin.Default()
-	router.NoRoute(middleware.NoRouteHandler())
 	// 崩溃恢复
 	router.Use(middleware.RecoveryMiddleware())
 	// gin日志
 	router.Use(log.GinLogger())
+
+	router.NoRoute(middleware.NoRouteHandler())
+
 	// jaeger trace 追踪
 	router.Use(trace.TracerWrapper)
 	// 跨域
 	router.Use(func(ctx *gin.Context) {
-		ctx.Header("Access-Control-Allow-Origin", "*")                            //跨域
-		ctx.Header("Access-Control-Allow-Headers", "token,Content-Type")          //必须的请求头
-		ctx.Header("Access-Control-Allow-Methods", "OPTIONS,PUT,POST,GET,DELETE") //接收的请求方法
+		ctx.Header("Access-Control-Allow-Origin", "*")                   //跨域
+		ctx.Header("Access-Control-Allow-Headers", "token,Content-Type") //必须的请求头
+		ctx.Header("Access-Control-Allow-Methods", "OPTIONS,POST,GET")   //接收的请求方法
 	})
-
-
 
 	//swagger
 	/*	url := ginSwagger.URL("http://localhost:9081/swagger/doc.json") // The url pointing to API definition
@@ -36,7 +36,7 @@ func Init() *gin.Engine {
 }
 
 func RegisterRouter(api *gin.Engine) {
-	apiPrefix:="/api/admin"
+	apiPrefix := "/api/admin"
 
 	// 登录验证 jwt token 验证 及信息提取
 	var notCheckLoginUrlArr []string
@@ -45,17 +45,16 @@ func RegisterRouter(api *gin.Engine) {
 	api.Use(middleware.JWTAuth(middleware.AllowPathPrefixSkipper(notCheckLoginUrlArr...)))
 
 	//casbin  权限管理
-	api.Use(middleware.CasbinMiddleware())
-
-
+	var notCheckPermissionUrlArr []string
+	notCheckLoginUrlArr = append(notCheckLoginUrlArr, notCheckLoginUrlArr...)
+	api.Use(middleware.CasbinMiddleware(middleware.AllowPathPrefixSkipper(notCheckPermissionUrlArr...)))
 
 	admin := api.Group(apiPrefix)
-	user := handler.User{}  //用户模块
-	admin.GET("/user/info", user.Info)
+	user := handler.User{} //用户模块
 	admin.POST("/user/login", user.Login)
 	admin.POST("/user/logout", user.Logout)
-	admin.POST("/user/edit_pwd", user.EditPwd)
-
+	/*	admin.GET("/user/info", user.Info)
+		admin.POST("/user/edit_pwd", user.EditPwd)*/
 
 	permission := admin.Group("/permission")
 	{

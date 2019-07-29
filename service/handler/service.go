@@ -39,7 +39,7 @@ func (e *Service) GetOne(ctx context.Context, req *service.UserRequest, rsp *ser
 // Call is a single request handler called via client.Call or the generated client code
 func (e *Service) PutCache(ctx context.Context, req *service.CacheRequest, rsp *service.CacheResponse) error {
 	log.Info("Received Service.PutCache request")
-	err := cache.Cache.Put(req.Key, req.Value, 50*time.Second)
+	err := cache.Put(req.Key, req.Value, 50*time.Second)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -50,7 +50,7 @@ func (e *Service) PutCache(ctx context.Context, req *service.CacheRequest, rsp *
 
 // Call is a single request handler called via client.Call or the generated client code
 func (e *Service) GetCache(ctx context.Context, req *service.CacheRequest, rsp *service.CacheResponse) error {
-	rsp.Value = cache.GetString(cache.Cache.Get(req.Key))
+	rsp.Value = cache.GetString(cache.Get(req.Key))
 	return nil
 }
 

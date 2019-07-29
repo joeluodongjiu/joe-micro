@@ -36,3 +36,4 @@
 
 - casbin          权限管理
 - docker-compose  集群启动
+- 自主实现一个参数验证器

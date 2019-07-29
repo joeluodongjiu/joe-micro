@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"time"
 )
 
 // 使用者根据自己需要修改这个结构体
@@ -17,7 +18,11 @@ var C struct {
 		Version string `yaml:"version"`
 	}
 
-	SignKey string `yaml:"signKey"`
+	Jwt  struct{
+		SignKey string `yaml:"signKey"`
+		TimeOut  time.Duration   `yaml:"timeOut"`
+	}   `yaml:"jwt"`
+
 
 	Mysql struct {
 		Address  string `yaml:"address"`

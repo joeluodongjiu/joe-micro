@@ -6,7 +6,6 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"joe-micro/lib/config"
 	"joe-micro/lib/log"
-	"time"
 )
 
 var db *gorm.DB
@@ -38,14 +37,4 @@ func GetDB() *gorm.DB {
 	return db
 }
 
-//是否查询成功
-func  IsFound(err error) bool{
-	return !gorm.IsRecordNotFoundError(err)
-}
 
-type CommonModel struct {
-	ID        int `gorm:"Column:id;primary_key"`
-	CreateAt time.Time  `gorm:"Column:createAt"`
-	UpdateAt time.Time   `gorm:"Column:updatedAt"`
-	DeleteAt *time.Time  `gorm:"Column:deleteAt" sql:"index"`
-}

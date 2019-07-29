@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/micro/cli"
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/registry/consul"
@@ -43,12 +44,6 @@ func main() {
 	defer io.Close()
 	opentracing.SetGlobalTracer(t)
 
-	/************************************/
-	/********** 消息队列  queue   ********/
-	/************************************/
-	queue.Init(config.C.Nsq.Address, config.C.Nsq.Lookup, config.C.Nsq.MaxInFlight)
-	subscriber.Registersubscriber() //注册消费者
-
 	// New Service
 	service := micro.NewService(
 		micro.Name(config.C.Service.Name),
@@ -61,7 +56,16 @@ func main() {
 	)
 
 	// Initialise service
-	service.Init()
+	service.Init(
+		micro.Action(func(c *cli.Context) {
+            log.Info("启动一些必须的服务或链接")
+			/************************************/
+			/********** 消息队列  queue   ********/
+			/************************************/
+			queue.Init(config.C.Nsq.Address, config.C.Nsq.Lookup, config.C.Nsq.MaxInFlight)
+			subscriber.Registersubscriber() //注册消费者
+		}),
+	)
 
 	// Register Handler
 	err = srv.RegisterServiceHandler(service.Server(), new(handler.Service))

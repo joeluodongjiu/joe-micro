@@ -17,6 +17,8 @@ var C struct {
 		Version string `yaml:"version"`
 	}
 
+	SignKey string `yaml:"signKey"`
+
 	Mysql struct {
 		Address  string `yaml:"address"`
 		Port     int    `yaml:"port"`

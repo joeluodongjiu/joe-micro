@@ -3,73 +3,36 @@ package jwt
 import (
 	"errors"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/gin"
-	"joe-micro/lib/log"
-	"net/http"
+	"joe-micro/lib/config"
 	"time"
 )
 
 // 一些常量
 var (
-	TokenExpired       = errors.New("Token 已过期")
-	TokenNotValidYet   = errors.New("Token 未激活")
-	TokenMalformed     = errors.New("这不是 Token")
-	TokenInvalid       = errors.New("无法解析的 Token")
-	SignKey             = []byte("newtrekWang")
+	TokenExpired     = errors.New("Token 已过期")
+	TokenNotValidYet = errors.New("Token 未激活")
+	TokenMalformed   = errors.New("这不是 Token")
+	TokenInvalid     = errors.New("无法解析的 Token")
+	SignKey          = []byte(config.C.SignKey)
 )
-
-// JWTAuth 中间件，检查token
-func JWTAuth() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		token := c.Request.Header.Get("token")
-		if token == "" {
-			c.JSON(http.StatusOK, gin.H{
-				"code":  4,
-				"msg":  "请求未携带token，无权限访问",
-			})
-			c.Abort()
-			return
-		}
-		log.Info("get token: ", token)
-		// parseToken 解析token包含的信息
-		claims, err :=  parseToken(token)
-		if err != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"code":  4,
-				"msg":    err.Error(),
-			})
-			c.Abort()
-			return
-		}
-		// 继续交由下一个路由处理,并将解析出的信息传递下去
-		c.Set("uid", claims.UID)
-	}
-}
-
-
 
 // 载荷，可以加一些自己需要的信息
 type customClaims struct {
-	UID    int `json:"uid"`
+	UID int `json:"uid"`
 	jwt.StandardClaims
 }
 
-
-
-
-
-
 // CreateToken 生成一个token
-func  CreateToken(uid int) (string, error) {
+func CreateToken(uid int) (string, error) {
 	claims := &customClaims{}
 	claims.UID = uid
-	claims.ExpiresAt= time.Now().Add(10*time.Hour).Unix()
+	claims.ExpiresAt = time.Now().Add(10 * time.Hour).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(SignKey)
 }
 
 // 解析Tokne
-func parseToken(tokenString string) (*customClaims, error) {
+func ParseToken(tokenString string) (*customClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &customClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return SignKey, nil
 	})
@@ -94,7 +57,7 @@ func parseToken(tokenString string) (*customClaims, error) {
 }
 
 // 更新token
-func  RefreshToken(tokenString string) (string, error) {
+func RefreshToken(tokenString string) (string, error) {
 	jwt.TimeFunc = func() time.Time {
 		return time.Unix(0, 0)
 	}

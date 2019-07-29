@@ -2,19 +2,21 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"joe-micro/adminApi/handler"
-	"joe-micro/adminApi/middleware/casbin"
-	"joe-micro/lib/jwt"
+	"joe-micro/adminApi/middleware"
 	"joe-micro/lib/log"
 	"joe-micro/lib/trace"
+	"joe-micro/adminApi/handler"
 )
 
-
-
-func Init()  *gin.Engine{
+func Init() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode) //是否生产模式启动
 	router := gin.Default()
+	router.NoRoute(middleware.NoRouteHandler())
+	// 崩溃恢复
+	router.Use(middleware.RecoveryMiddleware())
+	// gin日志
 	router.Use(log.GinLogger())
+	// jaeger trace 追踪
 	router.Use(trace.TracerWrapper)
 	// 跨域
 	router.Use(func(ctx *gin.Context) {
@@ -23,40 +25,36 @@ func Init()  *gin.Engine{
 		ctx.Header("Access-Control-Allow-Methods", "OPTIONS,PUT,POST,GET,DELETE") //接收的请求方法
 	})
 
-	// OPTIONS
-	router.NoRoute(func(ctx *gin.Context) {
-		if ctx.Request.Method == "OPTIONS" {
-			ctx.JSON(200, nil)
-		}
-	})
 
-	//登录接口
-	router.POST("/admin/login", handler.Login)
-
-	//jwt 用户鉴权
-	router.Use(jwt.JWTAuth())
-
-	//casbin  权限管理
-	router.Use(casbin.CasbinMiddleware())
 
 	//swagger
 	/*	url := ginSwagger.URL("http://localhost:9081/swagger/doc.json") // The url pointing to API definition
 		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))*/
 
-	admin := router.Group("/admin")
-	admin.POST("/login/exit", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"code": 0,
-			"msg":  "ok",
-		})
-		return
-	})
+	RegisterRouter(router)
+	return router
+}
+
+func RegisterRouter(api *gin.Engine) {
+	apiPrefix:="/api/admin"
+
+	// 登录验证 jwt token 验证 及信息提取
+	var notCheckLoginUrlArr []string
+	notCheckLoginUrlArr = append(notCheckLoginUrlArr, apiPrefix+"/user/login")
+	//jwt 用户鉴权
+	api.Use(middleware.JWTAuth(middleware.AllowPathPrefixSkipper(notCheckLoginUrlArr...)))
+
+	//casbin  权限管理
+	api.Use(middleware.CasbinMiddleware())
 
 
-	user := admin.Group("/user")
-	{
-		user.POST("createOne", handler.CreateOne)
-	}
+
+	admin := api.Group(apiPrefix)
+	user := handler.User{}  //用户模块
+	admin.GET("/user/info", user.Info)
+	admin.POST("/user/login", user.Login)
+	admin.POST("/user/logout", user.Logout)
+	admin.POST("/user/edit_pwd", user.EditPwd)
 
 
 	permission := admin.Group("/permission")
@@ -79,5 +77,4 @@ func Init()  *gin.Engine{
 		})
 
 	}
-    return router
 }

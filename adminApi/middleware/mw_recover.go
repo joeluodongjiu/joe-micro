@@ -2,11 +2,10 @@ package middleware
 
 import (
 	"bytes"
-	"fmt"
-	"io/ioutil"
-	"runtime"
-
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
+	"joe-micro/lib/log"
+	"runtime"
 )
 
 var (
@@ -22,8 +21,8 @@ func RecoveryMiddleware() gin.HandlerFunc {
 		defer func() {
 			if err := recover(); err != nil {
 				stack := stack(3)
-				fmt.Println("页面报错",string(stack))//这里会打印出错栈信息
-				c.JSON(500, gin.H{"message": "Recovery"})
+				log.Error("接口报错",string(stack))//这里会打印出错栈信息
+				c.JSON(500, gin.H{"code":-1, "msg": "Recovery"})
 				c.Abort()
 				return
 			}
@@ -42,7 +41,7 @@ func stack(skip int) []byte {
 		if !ok {
 			break
 		}
-		fmt.Fprintf(buf, "%s:%d (0x%x)\n", file, line, pc)
+		log.Error(buf, "%s:%d (0x%x)\n", file, line, pc)
 		if file != lastFile {
 			data, err := ioutil.ReadFile(file)
 			if err != nil {
@@ -51,7 +50,7 @@ func stack(skip int) []byte {
 			lines = bytes.Split(data, []byte{'\n'})
 			lastFile = file
 		}
-		fmt.Fprintf(buf, "\t%s: %s\n", function(pc), source(lines, line))
+		log.Error(buf, "\t%s: %s\n", function(pc), source(lines, line))
 	}
 	return buf.Bytes()
 }

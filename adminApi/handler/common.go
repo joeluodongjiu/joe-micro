@@ -1,17 +1,13 @@
 package handler
 
-
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 const (
-	SUCCESS_CODE          = 0      //成功的状态码
-	FAIL_CODE             = -1      //失败的状态码
-	TOKEN_KEY             = "token"  //页面token键名
-	SUPER_ADMIN_ID uint64 = 1 // 超级管理员账号ID
+	SUCCESS_CODE = 0  //成功的状态码
+	FAIL_CODE    = -1 //失败的状态码
 )
 
 type ResponseModel struct {
@@ -26,8 +22,6 @@ func resJSON(c *gin.Context, status int, v interface{}) {
 	c.Abort()
 }
 
-
-
 // 响应成功
 func resSuccess(c *gin.Context, v interface{}) {
 	ret := ResponseModel{Code: SUCCESS_CODE, Message: "ok", Data: v}
@@ -39,7 +33,6 @@ func resSuccessMsg(c *gin.Context) {
 	ret := ResponseModel{Code: SUCCESS_CODE, Message: "ok"}
 	resJSON(c, http.StatusOK, &ret)
 }
-
 
 // 响应错误-服务端故障
 func resErrSrv(c *gin.Context) {
@@ -53,7 +46,6 @@ func resFailCode(c *gin.Context, msg string, code int) {
 	resJSON(c, http.StatusOK, &ret)
 }
 
-
 // 响应错误-用户端故障
 func resErrCli(c *gin.Context, err error) {
 	ret := ResponseModel{Code: FAIL_CODE, Message: err.Error()}
@@ -62,7 +54,7 @@ func resErrCli(c *gin.Context, err error) {
 
 type ResponsePageData struct {
 	Total uint64      `json:"total"`
-	Res interface{}   `json:"items"`
+	Res   interface{} `json:"items"`
 }
 
 type ResponsePage struct {
@@ -76,5 +68,3 @@ func resSuccessPage(c *gin.Context, total uint64, list interface{}) {
 	ret := ResponsePage{Code: SUCCESS_CODE, Message: "ok", Data: ResponsePageData{Total: total, Res: list}}
 	resJSON(c, http.StatusOK, &ret)
 }
-
-

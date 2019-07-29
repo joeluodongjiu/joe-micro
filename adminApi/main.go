@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/micro/cli"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/registry/consul"
 	microLog "github.com/micro/go-micro/util/log"
@@ -18,7 +19,7 @@ import (
 // @title  微服务的管理端api文档demo
 // @version 1.0
 // @host  localhost:9081
-// @BasePath /
+// @BasePath /api/admin
 func main() {
 	//统一日志到服务的日志
 	microLog.SetLogger(log.NewMicroLogger())
@@ -43,25 +44,28 @@ func main() {
 	)
 
 	// initialise service
-	if err := service.Init(); err != nil {
+	if err := service.Init(
+		web.Action(func(ctx *cli.Context) {
+			/************************************/
+			/********** 链路追踪  trace   ********/
+			/************************************/
+			trace.SetSamplingFrequency(50)
+			t, io, err := trace.NewTracer(config.C.Service.Name, config.C.Jaeger)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer io.Close()
+			opentracing.SetGlobalTracer(t)
+
+			/************************************/
+			/********** 消息队列  queue   ********/
+			/************************************/
+			queue.Init(config.C.Nsq.Address, config.C.Nsq.Lookup, config.C.Nsq.MaxInFlight)
+
+		}),
+	); err != nil {
 		log.Error(err.Error())
 	}
-
-	/************************************/
-	/********** 链路追踪  trace   ********/
-	/************************************/
-	trace.SetSamplingFrequency(50)
-	t, io, err := trace.NewTracer(config.C.Service.Name, config.C.Jaeger)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer io.Close()
-	opentracing.SetGlobalTracer(t)
-
-	/************************************/
-	/********** 消息队列  queue   ********/
-	/************************************/
-	queue.Init(config.C.Nsq.Address, config.C.Nsq.Lookup, config.C.Nsq.MaxInFlight)
 
 	/************************************/
 	/********** gin  路由框架     ********/

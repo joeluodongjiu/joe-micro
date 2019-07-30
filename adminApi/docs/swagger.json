@@ -10,7 +10,97 @@
     "host": "localhost:9081",
     "basePath": "/api/admin",
     "paths": {
-        "/api/admin/user/login": {
+        "/user/edit_pwd": {
+            "post": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "用户修改密码",
+                "parameters": [
+                    {
+                        "description": "修改密码",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.editPwdReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{code:0,msg:ok}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/info": {
+            "get": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "获取用户信息及可访问的权限菜单",
+                "responses": {
+                    "200": {
+                        "description": "{code:0,msg:ok}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/login": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -18,13 +108,15 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "user"
+                ],
                 "summary": "用户登录",
                 "parameters": [
                     {
-                        "description": "json",
+                        "description": "body",
                         "name": "body",
                         "in": "body",
-                        "required": true,
                         "schema": {
                             "type": "object",
                             "$ref": "#/definitions/handler.login"
@@ -36,6 +128,87 @@
                         "description": "{code:0,msg:ok,data:{token:}}",
                         "schema": {
                             "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/logout": {
+            "get": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "用户登出",
+                "responses": {
+                    "200": {
+                        "description": "{code:0,msg:ok}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/user_mana/list": {
+            "get": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_mana   用户管理模块"
+                ],
+                "summary": "获取admin用户列表",
+                "responses": {
+                    "200": {
+                        "description": "用户列表",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.AdminUser"
+                            }
                         }
                     },
                     "400": {
@@ -69,6 +242,23 @@
                 }
             }
         },
+        "handler.editPwdReq": {
+            "type": "object",
+            "required": [
+                "new_password",
+                "old_password"
+            ],
+            "properties": {
+                "new_password": {
+                    "description": "新密码",
+                    "type": "string"
+                },
+                "old_password": {
+                    "description": "旧密码",
+                    "type": "string"
+                }
+            }
+        },
         "handler.login": {
             "type": "object",
             "required": [
@@ -77,12 +267,53 @@
             ],
             "properties": {
                 "password": {
+                    "description": "密码",
                     "type": "string"
                 },
                 "username": {
+                    "description": "用户名",
                     "type": "string"
                 }
             }
+        },
+        "model.AdminUser": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "邮箱",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "手机号",
+                    "type": "string"
+                },
+                "real_name": {
+                    "description": "真实姓名",
+                    "type": "string"
+                },
+                "salt": {
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态(1:启用  2.禁用)",
+                    "type": "integer"
+                },
+                "user_name": {
+                    "description": "用户名",
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "MustToken": {
+            "type": "apiKey",
+            "name": "token",
+            "in": "header"
         }
     }
 }

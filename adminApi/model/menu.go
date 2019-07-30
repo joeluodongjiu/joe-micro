@@ -41,3 +41,16 @@ func (bu *Menu) BeforeUpdate(scope *gorm.Scope) error {
 	bu.UpdateAt = orm.JsonTime(time.Now())
 	return nil
 }
+
+// 获取该用户权限下所有菜单
+func (Menu) GetMenusByUid(uid string, menus *[]Menu) (err error) {
+	sql := `select * from admin_menu
+	      where id in (
+					select menu_id from admin_role_menu where 
+				  role_id in (select role_id from admin_role where user_id=?)
+				)`
+	err = orm.GetDB().Raw(sql, uid).Find(menus).Error
+	return
+}
+
+

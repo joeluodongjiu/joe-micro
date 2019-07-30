@@ -9,15 +9,52 @@ definitions:
       msg:
         type: string
     type: object
+  handler.editPwdReq:
+    properties:
+      new_password:
+        description: 新密码
+        type: string
+      old_password:
+        description: 旧密码
+        type: string
+    required:
+    - new_password
+    - old_password
+    type: object
   handler.login:
     properties:
       password:
+        description: 密码
         type: string
       username:
+        description: 用户名
         type: string
     required:
     - password
     - username
+    type: object
+  model.AdminUser:
+    properties:
+      email:
+        description: 邮箱
+        type: string
+      password:
+        description: 密码
+        type: string
+      phone:
+        description: 手机号
+        type: string
+      real_name:
+        description: 真实姓名
+        type: string
+      salt:
+        type: string
+      status:
+        description: 状态(1:启用  2.禁用)
+        type: integer
+      user_name:
+        description: 用户名
+        type: string
     type: object
 host: localhost:9081
 info:
@@ -27,15 +64,70 @@ info:
   title: 微服务的管理端api文档demo
   version: "1.0"
 paths:
-  /api/admin/user/login:
+  /user/edit_pwd:
     post:
       consumes:
       - application/json
       parameters:
-      - description: json
+      - description: 修改密码
         in: body
         name: body
         required: true
+        schema:
+          $ref: '#/definitions/handler.editPwdReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{code:0,msg:ok}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 用户修改密码
+      tags:
+      - user
+  /user/info:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{code:0,msg:ok}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 获取用户信息及可访问的权限菜单
+      tags:
+      - user
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: body
         schema:
           $ref: '#/definitions/handler.login'
           type: object
@@ -55,4 +147,61 @@ paths:
           schema:
             $ref: '#/definitions/handler.ResponseModel'
       summary: 用户登录
+      tags:
+      - user
+  /user/logout:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{code:0,msg:ok}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 用户登出
+      tags:
+      - user
+  /user_mana/list:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 用户列表
+          schema:
+            items:
+              $ref: '#/definitions/model.AdminUser'
+            type: array
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 获取admin用户列表
+      tags:
+      - user_mana   用户管理模块
+securityDefinitions:
+  MustToken:
+    in: header
+    name: token
+    type: apiKey
 swagger: "2.0"

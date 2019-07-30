@@ -20,6 +20,11 @@ import (
 // @version 1.0
 // @host  localhost:9081
 // @BasePath /api/admin
+
+// @securityDefinitions.apikey MustToken
+// @in header
+// @name token
+
 func main() {
 	//统一日志到服务的日志
 	microLog.SetLogger(log.NewMicroLogger())

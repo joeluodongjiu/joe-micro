@@ -18,15 +18,15 @@ var (
 
 // 载荷，可以加一些自己需要的信息
 type customClaims struct {
-	UID int `json:"uid"`
+	UID string `json:"uid"`
 	jwt.StandardClaims
 }
 
 // CreateToken 生成一个token
-func CreateToken(uid int) (string, error) {
+func CreateToken(uid string) (string, error) {
 	claims := &customClaims{}
 	claims.UID = uid
-	claims.ExpiresAt = time.Now().Add(config.C.Jwt.TimeOut  * time.Hour).Unix()
+	claims.ExpiresAt = time.Now().Add(config.C.Jwt.TimeOut * time.Hour).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(SignKey)
 }

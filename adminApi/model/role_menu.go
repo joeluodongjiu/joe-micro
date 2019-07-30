@@ -10,8 +10,8 @@ import (
 //角色菜单关联表
 type RoleMenu struct {
 	orm.CommonModel
-	RoleID int `gorm:"column:role_id;not null;"` // 角色ID
-	MenuID int `gorm:"column:menu_id;not null;"` // 菜单ID
+	RoleID string `gorm:"column:role_id;not null;"` // 角色ID
+	MenuID string `gorm:"column:menu_id;not null;"` // 菜单ID
 }
 
 // 表名
@@ -25,13 +25,13 @@ func (bc *RoleMenu) BeforeCreate(scope *gorm.Scope) error {
 	if err != nil {
 		return err
 	}
-	bc.CreateAt = time.Now()
-	bc.UpdateAt = time.Now()
+	bc.CreateAt = orm.JsonTime(time.Now())
+	bc.UpdateAt = orm.JsonTime(time.Now())
 	return nil
 }
 
 // 更新前
 func (bu *RoleMenu) BeforeUpdate(scope *gorm.Scope) error {
-	bu.UpdateAt = time.Now()
+	bu.UpdateAt =orm.JsonTime(time.Now())
 	return nil
 }

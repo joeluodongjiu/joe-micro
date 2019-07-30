@@ -18,8 +18,8 @@ func init()  {
 }
 
 
-func   GenerateUUID()  int64{
+func   GenerateUUID()  string{
 	// Generate a snowflake ID.
 	id := node.Generate()
-	return int64(id)
+	return id.String()
 }

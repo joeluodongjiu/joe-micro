@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"joe-micro/adminApi/model/casbin"
 	"joe-micro/lib/log"
-	"strconv"
 )
 
 // CasbinMiddleware casbin中间件
@@ -27,7 +26,7 @@ func CasbinMiddleware(skipper ...SkipperFunc) gin.HandlerFunc {
 			c.Next()
 			return
 		}
-		sub = strconv.Itoa(c.GetInt("uid"))
+		sub = c.GetString("UID")
 		log.Infof("权限认证:%v  %v  %v", sub, obj, act)
 		if b, err := casbin.CsbinCheckPermission(sub, obj, act); err != nil {
 			c.JSON(500, gin.H{

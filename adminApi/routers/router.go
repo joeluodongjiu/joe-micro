@@ -2,6 +2,9 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
+	_ "joe-micro/adminApi/docs"
 	"joe-micro/adminApi/handler"
 	"joe-micro/adminApi/middleware"
 	"joe-micro/lib/log"
@@ -18,6 +21,10 @@ func Init() *gin.Engine {
 	// gin日志
 	router.Use(log.GinLogger())
 
+	//swagger
+	url := ginSwagger.URL("http://localhost:9081/swagger/doc.json") // The url pointing to API definition
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
+
 	// jaeger trace 追踪
 	router.Use(trace.TracerWrapper)
 	// 跨域
@@ -26,10 +33,6 @@ func Init() *gin.Engine {
 		ctx.Header("Access-Control-Allow-Headers", "token,Content-Type") //必须的请求头
 		ctx.Header("Access-Control-Allow-Methods", "OPTIONS,POST,GET")   //接收的请求方法
 	})
-
-	//swagger
-	/*	url := ginSwagger.URL("http://localhost:9081/swagger/doc.json") // The url pointing to API definition
-		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))*/
 
 	RegisterRouter(router)
 	return router
@@ -54,8 +57,8 @@ func RegisterRouter(api *gin.Engine) {
 	user := handler.User{} //用户模块
 	admin.POST("/user/login", user.Login)
 	admin.GET("/user/logout", user.Logout)
-	/*	admin.GET("/user/info", user.Info)
-		admin.POST("/user/edit_pwd", user.EditPwd)*/
+	admin.GET("/user/info", user.Info)
+	admin.POST("/user/edit_pwd", user.EditPwd)
 
 	permission := admin.Group("/permission")
 	{

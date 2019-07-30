@@ -1,4 +1,24 @@
-basePath: /
+basePath: /api/admin
+definitions:
+  handler.ResponseModel:
+    properties:
+      code:
+        type: integer
+      data:
+        type: object
+      msg:
+        type: string
+    type: object
+  handler.login:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
 host: localhost:9081
 info:
   contact: {}
@@ -6,5 +26,33 @@ info:
   license: {}
   title: 微服务的管理端api文档demo
   version: "1.0"
-paths: {}
+paths:
+  /api/admin/user/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: json
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.login'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{code:0,msg:ok,data:{token:}}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      summary: 用户登录
 swagger: "2.0"

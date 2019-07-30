@@ -8,6 +8,81 @@
         "version": "1.0"
     },
     "host": "localhost:9081",
-    "basePath": "/",
-    "paths": {}
+    "basePath": "/api/admin",
+    "paths": {
+        "/api/admin/user/login": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "用户登录",
+                "parameters": [
+                    {
+                        "description": "json",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.login"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{code:0,msg:ok,data:{token:}}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "handler.ResponseModel": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "object"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.login": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        }
+    }
 }

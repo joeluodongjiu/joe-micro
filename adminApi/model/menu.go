@@ -12,7 +12,7 @@ type Menu struct {
 	orm.CommonModel
 	Name        string `gorm:"column:name;size:32;not null;" json:"name" form:"name"`                           // 菜单名称
 	Status      int    `gorm:"column:status;type:tinyint(1);not null;" json:"status" form:"status"`             // 状态(1:启用 2:不启用)
-	ParentID    int    `gorm:"column:parent_id;not null;" json:"parent_id" form:"parent_id"`                    // 父级ID
+	ParentID    string `gorm:"column:parent_id;not null;" json:"parent_id" form:"parent_id"`                    // 父级ID
 	URL         string `gorm:"column:url;size:72;" json:"url" form:"url"`                                       // 菜单URL
 	Sequence    int    `gorm:"column:sequence;not null;" json:"sequence" form:"sequence"`                       // 排序值
 	MenuType    int    `gorm:"column:menu_type;type:tinyint(1);not null;" json:"menu_type" form:"menu_type"`    // 菜单类型 1模块2菜单3操作
@@ -31,13 +31,13 @@ func (bc *Menu) BeforeCreate(scope *gorm.Scope) error {
 	if err != nil {
 		return err
 	}
-	bc.CreateAt = time.Now()
-	bc.UpdateAt = time.Now()
+	bc.CreateAt = orm.JsonTime(time.Now())
+	bc.UpdateAt = orm.JsonTime(time.Now())
 	return nil
 }
 
 // 更新前
 func (bu *Menu) BeforeUpdate(scope *gorm.Scope) error {
-	bu.UpdateAt = time.Now()
+	bu.UpdateAt = orm.JsonTime(time.Now())
 	return nil
 }

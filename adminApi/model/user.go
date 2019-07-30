@@ -32,13 +32,13 @@ func (bc *AdminUser) BeforeCreate(scope *gorm.Scope) error {
 	if err != nil {
 		return err
 	}
-	bc.CreateAt = time.Now()
-	bc.UpdateAt = time.Now()
+	bc.CreateAt = orm.JsonTime(time.Now())
+	bc.UpdateAt = orm.JsonTime(time.Now())
 	return nil
 }
 
 // 更新前
 func (bu *AdminUser) BeforeUpdate(scope *gorm.Scope) error {
-	bu.UpdateAt = time.Now()
+	bu.UpdateAt = orm.JsonTime(time.Now())
 	return nil
 }

@@ -6,7 +6,6 @@ import (
 	"joe-micro/lib/jwt"
 	"joe-micro/lib/log"
 	"net/http"
-	"strconv"
 )
 
 // JWTAuth 中间件，检查token
@@ -37,7 +36,7 @@ func JWTAuth(skipper ...SkipperFunc) gin.HandlerFunc {
 			return
 		}
 		//中心化的管理端需要从缓存中取这个token是否过期
-		if  cache.GetString(cache.Get(strconv.Itoa(claims.UID))) != token{
+		if  cache.GetString(cache.Get(claims.UID)) != token{
 			c.JSON(http.StatusOK, gin.H{
 				"code":  4,
 				"msg":  "token 失效",

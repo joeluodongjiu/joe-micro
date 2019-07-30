@@ -5,7 +5,6 @@ import (
 	"joe-micro/adminApi/model"
 	"joe-micro/lib/log"
 	"joe-micro/lib/orm"
-	"strconv"
 )
 
 const (
@@ -32,7 +31,7 @@ func init() {
 	e = some(where (p.eft == allow))
 	
 	[matchers]
-	m = g(r.sub, p.sub) == true && keyMatch2(r.obj, p.obj) == true && regexMatch(r.act, p.act) == true || r.sub == "r_1"`
+	m = g(r.sub, p.sub) == true && keyMatch2(r.obj, p.obj) == true && regexMatch(r.act, p.act) == true || r.sub == "u_1"`
 	var err error
 	enforcer, err = casbin.NewEnforcerSafe(
 		casbin.NewModel(casbinModel),
@@ -54,27 +53,27 @@ func init() {
 }
 
 // 删除角色
-func CsbinDeleteRole(roleids []int) {
+func CsbinDeleteRole(roleids []string) {
 	if enforcer == nil {
 		return
 	}
 	for _, rid := range roleids {
-		enforcer.DeletePermissionsForUser(PrefixRoleID + strconv.Itoa(rid))
-		enforcer.DeleteRole(PrefixRoleID + strconv.Itoa(rid))
+		enforcer.DeletePermissionsForUser(PrefixRoleID + rid)
+		enforcer.DeleteRole(PrefixRoleID + rid)
 	}
 }
 
 // 设置角色权限
-func CsbinSetRolePermission(roleid int) {
+func CsbinSetRolePermission(roleid string) {
 	if enforcer == nil {
 		return
 	}
-	enforcer.DeletePermissionsForUser(PrefixRoleID + strconv.Itoa(roleid))
+	enforcer.DeletePermissionsForUser(PrefixRoleID + roleid)
 	setRolePermission(enforcer, roleid)
 }
 
 // 为每个角色赋值权限
-func setRolePermission(enforcer *casbin.Enforcer, roleid int) {
+func setRolePermission(enforcer *casbin.Enforcer, roleid string) {
 	var rolemenus []model.RoleMenu
 	err := orm.Find(&model.RoleMenu{RoleID: roleid}, &rolemenus)
 	if err != nil {
@@ -91,7 +90,7 @@ func setRolePermission(enforcer *casbin.Enforcer, roleid int) {
 			return
 		}
 		if menu.MenuType == 3 {
-			enforcer.AddPermissionForUser(PrefixRoleID+strconv.Itoa(roleid), "/api/admin"+menu.URL,menu.OperateType)
+			enforcer.AddPermissionForUser(PrefixRoleID+roleid, "/api/admin"+menu.URL, menu.OperateType)
 		}
 	}
 }
@@ -102,11 +101,11 @@ func CsbinCheckPermission(userID, url, methodtype string) (bool, error) {
 }
 
 // 给用户添加角色,可以在登录是赋值到内存,也可以启动项目时加进内存
-func CsbinAddRoleForUser(userid int) (err error) {
+func CsbinAddRoleForUser(userid string) (err error) {
 	if enforcer == nil {
 		return
 	}
-	uid := PrefixUserID + strconv.Itoa(userid)
+	uid := PrefixUserID + userid
 	enforcer.DeleteRolesForUser(uid)
 	var adminsroles []model.AdminUserRoles
 	err = orm.Find(&model.AdminUserRoles{UserID: userid}, &adminsroles)
@@ -114,7 +113,7 @@ func CsbinAddRoleForUser(userid int) (err error) {
 		return
 	}
 	for _, adminsrole := range adminsroles {
-		enforcer.AddRoleForUser(uid, PrefixRoleID+strconv.Itoa(adminsrole.RoleID))
+		enforcer.AddRoleForUser(uid, PrefixRoleID+adminsrole.RoleID)
 	}
 	return
 }

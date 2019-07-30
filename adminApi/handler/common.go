@@ -6,15 +6,13 @@ import (
 )
 
 const (
-	SUCCESS_CODE   = 0  //成功的状态码
-	BAD_REQUEST    = 1  //参数错误
-	BUSINESS_ERR   = 2  //业务错误
-	PERMISSION_ERR = 4  //权限错误
-	FAIL_CODE      = -1 //失败的状态码
-
-
-
-	USER_UID_KEY         = "UID"   //页面UUID键名
+	SUCCESS_CODE   = 0     //成功的状态码
+	BAD_REQUEST    = 1     //参数错误
+	BUSINESS_ERR   = 2     //业务错误
+	PERMISSION_ERR = 4     //权限错误
+	FAIL_CODE      = -1    //失败的状态码
+	USER_UID_KEY   = "UID" //页面UUID键名
+	SUPER_ADMIN_ID = "1"     //超级管理员
 )
 
 type ResponseModel struct {
@@ -51,8 +49,6 @@ func resBusinessP(c *gin.Context, msg string) {
 	ret := ResponseModel{Code: BUSINESS_ERR, Message: msg}
 	resJSON(c, http.StatusOK, &ret)
 }
-
-
 
 // 响应错误-服务端故障
 func resErrSrv(c *gin.Context) {

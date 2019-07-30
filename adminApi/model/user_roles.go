@@ -9,8 +9,8 @@ import (
 
 type AdminUserRoles struct {
 	orm.CommonModel
-	UserID int `gorm:"column:user_id;not null;"` // 管理员ID
-	RoleID int `gorm:"column:role_id;not null;"` // 角色ID
+	UserID string `gorm:"column:user_id;not null;"` // 管理员ID
+	RoleID string `gorm:"column:role_id;not null;"` // 角色ID
 }
 
 func (AdminUserRoles) TableName() string {
@@ -23,13 +23,13 @@ func (bc *AdminUserRoles) BeforeCreate(scope *gorm.Scope) error {
 	if err != nil {
 		return err
 	}
-	bc.CreateAt = time.Now()
-	bc.UpdateAt = time.Now()
+	bc.CreateAt = orm.JsonTime(time.Now())
+	bc.UpdateAt = orm.JsonTime(time.Now())
 	return nil
 }
 
 // 更新前
 func (bu *AdminUserRoles) BeforeUpdate(scope *gorm.Scope) error {
-	bu.UpdateAt = time.Now()
+	bu.UpdateAt = orm.JsonTime(time.Now())
 	return nil
 }

@@ -9,7 +9,6 @@ func NoMethodHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.JSON(405, gin.H{"code":2,"msg": "方法不被允许"})
 		c.Abort()
-		return
 	}
 }
 
@@ -18,7 +17,6 @@ func NoRouteHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.JSON(404, gin.H{"code":2,"msg": "未找到请求路由的处理函数"})
 		c.Abort()
-		return
 	}
 }
 

@@ -37,7 +37,7 @@ func (u User) Login(c *gin.Context) {
 			resBusinessP(c,"没有此条记录")
 			return
 		}
-		log.Warn(err)
+		log.Error(err)
 		resErrSrv(c)
 		return
 	}
@@ -54,18 +54,21 @@ func (u User) Login(c *gin.Context) {
 	//颁发token
 	token, err := jwt.CreateToken(user.ID)
 	if err != nil {
+		log.Error(err)
 		resErrSrv(c)
 		return
 	}
 	//casbin 处理
 	err = casbin.CsbinAddRoleForUser(user.ID)
 	if err != nil {
+		log.Error(err)
 		resErrSrv(c)
 		return
 	}
 	//token存进cache
 	err=cache.Put(strconv.Itoa(user.ID), token, config.C.Jwt.TimeOut * time.Hour)
 	if err != nil {
+		log.Error(err)
 		resErrSrv(c)
 		return
 	}
@@ -83,6 +86,7 @@ func(u User)Logout(c *gin.Context){
 	//从缓存中删除uid
 	err:=cache.Delete(strconv.Itoa(uid))
 	if err != nil {
+		log.Error(err)
 		resErrSrv(c)
 		return
 	}

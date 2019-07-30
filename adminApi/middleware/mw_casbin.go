@@ -24,7 +24,8 @@ func CasbinMiddleware(skipper ...SkipperFunc) gin.HandlerFunc {
 		case "POST":
 			act = "write"
 		default:
-			act = "read"
+			c.Next()
+			return
 		}
 		sub = strconv.Itoa(c.GetInt("uid"))
 		log.Infof("权限认证:%v  %v  %v", sub, obj, act)

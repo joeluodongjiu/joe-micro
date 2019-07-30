@@ -8,7 +8,9 @@ service:
   version: latest
 
 #jwt key
-signKey: api
+jwt:
+  signKey: api
+  timeOut: 10
 
 # mysql配置
 mysql:

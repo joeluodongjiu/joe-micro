@@ -11,12 +11,12 @@ import (
 func Init() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode) //是否生产模式启动
 	router := gin.Default()
+
+	router.NoRoute(middleware.NoRouteHandler())
 	// 崩溃恢复
 	router.Use(middleware.RecoveryMiddleware())
 	// gin日志
 	router.Use(log.GinLogger())
-
-	router.NoRoute(middleware.NoRouteHandler())
 
 	// jaeger trace 追踪
 	router.Use(trace.TracerWrapper)
@@ -46,13 +46,14 @@ func RegisterRouter(api *gin.Engine) {
 
 	//casbin  权限管理
 	var notCheckPermissionUrlArr []string
-	notCheckLoginUrlArr = append(notCheckLoginUrlArr, notCheckLoginUrlArr...)
+	notCheckPermissionUrlArr = append(notCheckPermissionUrlArr, notCheckLoginUrlArr...)
+	notCheckPermissionUrlArr = append(notCheckPermissionUrlArr, apiPrefix+"/user/logout")
 	api.Use(middleware.CasbinMiddleware(middleware.AllowPathPrefixSkipper(notCheckPermissionUrlArr...)))
 
 	admin := api.Group(apiPrefix)
 	user := handler.User{} //用户模块
 	admin.POST("/user/login", user.Login)
-	admin.POST("/user/logout", user.Logout)
+	admin.GET("/user/logout", user.Logout)
 	/*	admin.GET("/user/info", user.Info)
 		admin.POST("/user/edit_pwd", user.EditPwd)*/
 

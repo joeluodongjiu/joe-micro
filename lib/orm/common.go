@@ -5,7 +5,6 @@ import (
 	"time"
 )
 
-
 type JsonTime time.Time
 
 const (
@@ -28,17 +27,23 @@ func (t JsonTime) MarshalJSON() ([]byte, error) {
 
 //基础model
 type CommonModel struct {
-	ID       string     `gorm:"Column:id;primary_key"  json:"id"`
+	ID       string    `gorm:"Column:id;primary_key"  json:"id"`
 	CreateAt JsonTime  `gorm:"Column:createAt"  json:"createAt"`
 	UpdateAt JsonTime  `gorm:"Column:updateAt"  json:"updateAt"`
 	DeleteAt *JsonTime `gorm:"Column:deleteAt" sql:"index" json:"deleteAt"`
 }
 
 // 分页条件
-type PageWhereOrder struct {
-	Order string
+type PageWhere struct {
 	Where string
 	Value []interface{}
+}
+
+// 分页参数返回
+type IndexPage struct {
+	Total uint64 `json:"total"`  //总数
+	Page  uint64 `json:"page"  ` //页数
+	Num   uint64 `json:"num"   ` //数量
 }
 
 // Create
@@ -79,7 +84,7 @@ func DeleteByWhere(model, where interface{}) (count int64, err error) {
 }
 
 // Delete
-func DeleteByID(model interface{}, id uint64) (count int64, err error) {
+func DeleteByID(model interface{}, id string) (count int64, err error) {
 	db := db.Where("id=?", id).Delete(model)
 	err = db.Error
 	if err != nil {
@@ -90,7 +95,7 @@ func DeleteByID(model interface{}, id uint64) (count int64, err error) {
 }
 
 // Delete
-func DeleteByIDS(model interface{}, ids []uint64) (count int64, err error) {
+func DeleteByIDS(model interface{}, ids []string) (count int64, err error) {
 	db := db.Where("id in (?)", ids).Delete(model)
 	err = db.Error
 	if err != nil {
@@ -101,7 +106,7 @@ func DeleteByIDS(model interface{}, ids []uint64) (count int64, err error) {
 }
 
 // First
-func FirstByID(out interface{}, id int) (notFound bool, err error) {
+func FirstByID(out interface{}, id string) (notFound bool, err error) {
 	err = db.First(out, id).Error
 	if err != nil {
 		notFound = gorm.IsRecordNotFoundError(err)
@@ -150,26 +155,26 @@ func ScanList(model, where interface{}, out interface{}, orders ...string) error
 }
 
 // GetPage
-func GetPage(model, where interface{}, out interface{}, pageIndex, pageSize uint64, totalCount *uint64, whereOrder ...PageWhereOrder) error {
+func GetPage(model, where interface{}, out interface{}, indexPage *IndexPage, order string, whereOrder ...PageWhere) error {
 	db := db.Model(model).Where(where)
+	if order != "" {
+		db = db.Order(order)
+	}
 	if len(whereOrder) > 0 {
 		for _, wo := range whereOrder {
-			if wo.Order != "" {
-				db = db.Order(wo.Order)
-			}
 			if wo.Where != "" {
 				db = db.Where(wo.Where, wo.Value...)
 			}
 		}
 	}
-	err := db.Count(totalCount).Error
+	err := db.Count(&indexPage.Total).Error
 	if err != nil {
 		return err
 	}
-	if *totalCount == 0 {
+	if indexPage.Total == 0 {
 		return nil
 	}
-	return db.Offset((pageIndex - 1) * pageSize).Limit(pageSize).Find(out).Error
+	return db.Offset((indexPage.Page - 1) * indexPage.Num).Limit(indexPage.Num).Find(out).Error
 }
 
 // PluckList

@@ -20,6 +20,12 @@ import (
 // @version 1.0
 // @host  localhost:8081
 // @BasePath /
+
+// @securityDefinitions.basic BasicAuth
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 
 	//统一日志到服务的日志

@@ -9,6 +9,27 @@ definitions:
       msg:
         type: string
     type: object
+  handler.adminUserReq:
+    properties:
+      email:
+        description: 邮箱
+        type: string
+      password:
+        description: 密码
+        type: string
+      phone:
+        description: 手机号
+        type: string
+      real_name:
+        description: 真实姓名
+        type: string
+      status:
+        description: 状态(1:启用  2.禁用)
+        type: integer
+      username:
+        description: 用户名
+        type: string
+    type: object
   handler.editPwdReq:
     properties:
       new_password:
@@ -57,7 +78,7 @@ definitions:
       status:
         description: 状态(1:启用  2.禁用)
         type: integer
-      user_name:
+      username:
         description: 用户名
         type: string
     type: object
@@ -178,6 +199,38 @@ paths:
       summary: 用户登出
       tags:
       - user   用户操作
+  /user_mana/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户资料
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.adminUserReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{code:0,msg:ok}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 创建admin用户
+      tags:
+      - user_mana   用户管理模块
   /user_mana/delete:
     post:
       consumes:
@@ -194,9 +247,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: 用户详情
+          description: '{code:0,msg:ok}'
           schema:
-            $ref: '#/definitions/model.AdminUser'
+            $ref: '#/definitions/handler.ResponseModel'
         "400":
           description: '{code:1,msg:无效的请求参数}'
           schema:
@@ -292,20 +345,25 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: id 列表
+      - description: 用户uid
+        in: query
+        name: uid
+        required: true
+        type: string
+      - description: 用户资料
         in: body
         name: body
         required: true
         schema:
-          $ref: '#/definitions/handler.ids'
+          $ref: '#/definitions/handler.adminUserReq'
           type: object
       produces:
       - application/json
       responses:
         "200":
-          description: 用户详情
+          description: '{code:0,msg:ok}'
           schema:
-            $ref: '#/definitions/model.AdminUser'
+            $ref: '#/definitions/handler.ResponseModel'
         "400":
           description: '{code:1,msg:无效的请求参数}'
           schema:

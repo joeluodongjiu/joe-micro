@@ -27,10 +27,10 @@ func (t JsonTime) MarshalJSON() ([]byte, error) {
 
 //基础model
 type CommonModel struct {
-	ID       string    `gorm:"Column:id;primary_key"  json:"id"`
-	CreateAt JsonTime  `gorm:"Column:createAt"  json:"createAt"`
-	UpdateAt JsonTime  `gorm:"Column:updateAt"  json:"updateAt"`
-	DeleteAt *JsonTime `gorm:"Column:deleteAt" sql:"index" json:"deleteAt"`
+	ID       string    `gorm:"column:id;primary_key"  json:"id"`
+	CreateAt JsonTime  `gorm:"column:createAt"  json:"createAt"`
+	UpdateAt JsonTime  `gorm:"column:updateAt"  json:"updateAt"`
+	DeleteAt *JsonTime `gorm:"column:deleteAt" sql:"index" json:"deleteAt"`
 }
 
 // 分页条件

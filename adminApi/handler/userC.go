@@ -228,7 +228,7 @@ func (UserController) EditPwd(c *gin.Context) {
 	}
 	new_password := toolfunc.EncUserPwd(reqData.NewPassword, user.Salt)
 	NewAdminUser := model.AdminUser{Password: new_password}
-	err = orm.Updates(&user, &NewAdminUser)
+	err = orm.Updates(user, NewAdminUser)
 	if err != nil {
 		log.Error(err)
 		resErrSrv(c)

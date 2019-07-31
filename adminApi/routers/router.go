@@ -67,7 +67,7 @@ func RegisterRouter(api *gin.Engine) {
 	admin.GET("/user_mana/detail", user_manaC.Detail)
 	admin.POST("/user_mana/delete", user_manaC.Delete)
 	admin.POST("/user_mana/update", user_manaC.Update)
-	//admin.POST("/user_mana/create", user_manaC.Create)
+	admin.POST("/user_mana/create", user_manaC.Create)
 	//admin.GET("/user_mana/adminsroleidlist", user_manaC.AdminsRoleIDList)
 	//admin.POST("/user_mana/setrole", user_manaC.SetRole)
 

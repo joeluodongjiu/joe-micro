@@ -10,9 +10,9 @@ import (
 //角色表
 type Role struct {
 	orm.CommonModel
-	Memo     string `gorm:"column:memo;size:64;" json:"memo" form:"memo"`                 // 备注
-	Name     string `gorm:"column:name;size:32;not null;" json:"name" form:"name"`        // 名称
-	Sequence int    `gorm:"column:sequence;not null;" json:"sequence" form:"sequence"`    // 排序值
+	Memo     string `gorm:"column:memo;size:64;" json:"memo" form:"memo"`              // 备注
+	Name     string `gorm:"column:name;size:32;not null;" json:"name" form:"name"`     // 名称
+	Sequence uint64 `gorm:"column:sequence;not null;" json:"sequence" form:"sequence"` // 排序值
 }
 
 // 表名

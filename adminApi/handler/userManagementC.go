@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
 	"joe-micro/adminApi/model"
 	"joe-micro/lib/log"
@@ -19,7 +18,7 @@ type UserManagementController struct{} //用户管理控制器
 // @Produce  json
 // @Param   page         query    int       false     "页码,默认为1"
 // @Param   num          query    int       false     "返回条数,默认为10"
-// @Param   sort         query    string    false     "排序字段,默认为createAt"
+// @Param   sort         query    string    false     "排序字段,默认为createdAt"
 // @Param   key          query    string    false     "搜索关键字"
 // @Param   orderType    query    string    false     "排序规则,默认为DESC"
 // @Success 200 {array}   model.AdminUser 	"用户列表"
@@ -32,7 +31,7 @@ func (UserManagementController) List(c *gin.Context) {
 	err := reqData.getListQuery(c)
 	if err != nil {
 		log.Warn(err)
-		resBadRequest(c, err)
+		resBadRequest(c, err.Error())
 		return
 	}
 	var whereOrder []orm.PageWhere
@@ -70,7 +69,7 @@ func (UserManagementController) List(c *gin.Context) {
 func (UserManagementController) Detail(c *gin.Context) {
 	uid, exist := c.GetQuery("uid")
 	if !exist {
-		resBadRequest(c, errors.New("缺少参数"))
+		resBadRequest(c, "uid不能为空")
 		return
 	}
 	user := model.AdminUser{}
@@ -108,7 +107,7 @@ func (UserManagementController) Delete(c *gin.Context) {
 	var uids ids
 	err := c.ShouldBind(&uids)
 	if err != nil || len(uids.Ids) == 0 {
-		resBadRequest(c, err)
+		resBadRequest(c, err.Error())
 		return
 	}
 	admin := model.AdminUser{}
@@ -120,13 +119,13 @@ func (UserManagementController) Delete(c *gin.Context) {
 	resSuccessMsg(c)
 }
 
-type adminUserReq struct {
-	UserName string `gorm:"column:username;size:32;not null;" json:"username" form:"user_name"` // 用户名
-	Password string `gorm:"column:password;not null;" json:"password" form:"password"`          // 密码
-	RealName string `gorm:"column:real_name;size:32;" json:"real_name" form:"real_name"`        // 真实姓名
-	Email    string `gorm:"column:email;size:64;" json:"email" form:"email"`                    // 邮箱
-	Phone    string `gorm:"column:phone;type:char(20);" json:"phone" form:"phone"`              // 手机号
-	Status   uint64 `gorm:"column:status" json:"status" form:"status" binding:"max=2"`          // 状态(1:启用  2.禁用)
+type updateAdminUserReq struct {
+	UserName string `gorm:"column:username;size:32;not null;" json:"username" ` // 用户名
+	Password string `gorm:"column:password;not null;" json:"password" `         // 密码
+	RealName string `gorm:"column:real_name;size:32;" json:"real_name" `        // 真实姓名
+	Email    string `gorm:"column:email;size:64;" json:"email" `                // 邮箱
+	Phone    string `gorm:"column:phone;type:char(20);" json:"phone" `          // 手机号
+	Status   uint8  `gorm:"column:status" json:"status"  binding:"max=2"`       // 状态(1:启用  2.禁用)
 }
 
 // 更新admin用户
@@ -135,7 +134,7 @@ type adminUserReq struct {
 // @Accept  json
 // @Produce  json
 // @Param   uid     query   string         true         "用户uid"
-// @Param   body    body    handler.adminUserReq    true     "用户资料"
+// @Param   body    body    handler.updateAdminUserReq    true     "用户资料"
 // @Success 200 {object}  handler.ResponseModel 	"{code:0,msg:ok}"
 // @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
 // @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
@@ -144,13 +143,13 @@ type adminUserReq struct {
 func (UserManagementController) Update(c *gin.Context) {
 	uid, exist := c.GetQuery("uid")
 	if !exist {
-		resBadRequest(c, errors.New("uid不能为空"))
+		resBadRequest(c, "uid不能为空")
 		return
 	}
-	adminUser := adminUserReq{}
+	adminUser := updateAdminUserReq{}
 	err := c.ShouldBind(&adminUser)
 	if err != nil {
-		resBadRequest(c, err)
+		resBadRequest(c, err.Error())
 		return
 	}
 	where := model.AdminUser{}
@@ -179,22 +178,31 @@ func (UserManagementController) Update(c *gin.Context) {
 	resSuccessMsg(c)
 }
 
+type createAdminUserReq struct {
+	UserName string `gorm:"column:username" json:"username" binding:"required"`          // 用户名
+	Password string `gorm:"column:password" json:"password"  binding:"required" `        // 密码
+	RealName string `gorm:"column:real_name" json:"real_name" `                          // 真实姓名
+	Email    string `gorm:"column:email" json:"email" `                                  // 邮箱
+	Phone    string `gorm:"column:phone" json:"phone" `                                  // 手机号
+	Status   uint8  `gorm:"column:status" json:"status"  binding:"required,min=1,max=2"` // 状态(1:启用  2.禁用)
+}
+
 // 创建admin用户
 // @Summary 创建admin用户
 // @Tags   user_mana   用户管理模块
 // @Accept  json
 // @Produce  json
-// @Param   body    body    handler.adminUserReq    true     "用户资料"
+// @Param   body    body    handler.createAdminUserReq    true     "用户资料"
 // @Success 200 {object}  handler.ResponseModel 	"{code:0,msg:ok}"
 // @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
 // @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
 // @Security MustToken
 // @Router /user_mana/create [post]
 func (UserManagementController) Create(c *gin.Context) {
-	reqData := adminUserReq{}
+	reqData := createAdminUserReq{}
 	err := c.ShouldBind(&reqData)
 	if err != nil {
-		resBadRequest(c, err)
+		resBadRequest(c, err.Error())
 		return
 	}
 	adminUser := model.AdminUser{}
@@ -213,4 +221,66 @@ func (UserManagementController) Create(c *gin.Context) {
 	}
 	resData := map[string]interface{}{"id": adminUser.ID}
 	resSuccess(c, resData)
+}
+
+// 获取用户下的角色ID列表
+// @Summary 获取用户下的角色ID列表
+// @Tags   user_mana   用户管理模块
+// @Accept  json
+// @Produce  json
+// @Param   uid     query   string         true         "用户uid"
+// @Success 200 {object}  handler.ResponseModel 	"{code:0,msg:ok}"
+// @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
+// @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
+// @Security MustToken
+// @Router /user_mana/usersRoleIDList [get]
+func (UserManagementController) UsersRoleIDList(c *gin.Context) {
+	uid, exist := c.GetQuery("uid")
+	if !exist {
+		resBadRequest(c, "uid不能为空")
+		return
+	}
+	var roleList []string
+	where := model.AdminUserRoles{UserID: uid}
+	err := orm.PluckList(&model.AdminUserRoles{}, &where, "role_id", &roleList)
+	if err != nil {
+		log.Warn(err)
+		resErrSrv(c)
+		return
+	}
+	resSuccess(c, roleList)
+}
+
+// 为用户添加角色权限
+// @Summary 为用户添加角色权限
+// @Tags   user_mana   用户管理模块
+// @Accept  json
+// @Produce  json
+// @Param   uid     query   string         true         "用户uid"
+// @Param   body    body    handler.ids    true         "角色id"
+// @Success 200 {object}  handler.ResponseModel 	"{code:0,msg:ok}"
+// @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
+// @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
+// @Security MustToken
+// @Router /user_mana/setRole [post]
+func (UserManagementController) SetRole(c *gin.Context) {
+	uid, exist := c.GetQuery("uid")
+	if !exist {
+		resBadRequest(c, "uid不能为空")
+		return
+	}
+	var roleids ids
+	err := c.Bind(&roleids)
+	if err != nil {
+		resBadRequest(c, err.Error())
+		return
+	}
+	userRole := model.AdminUserRoles{}
+	err = userRole.SetRole(uid, roleids.Ids) //添加记录 并 在casbin添加权限
+	if err != nil {
+		log.Error(err)
+		resErrSrv(c)
+		return
+	}
+	resSuccessMsg(c)
 }

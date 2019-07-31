@@ -27,10 +27,10 @@ func (t JsonTime) MarshalJSON() ([]byte, error) {
 
 //基础model
 type CommonModel struct {
-	ID       string    `gorm:"column:id;primary_key"  json:"id"`
-	CreateAt JsonTime  `gorm:"column:createAt"  json:"createAt"`
-	UpdateAt JsonTime  `gorm:"column:updateAt"  json:"updateAt"`
-	DeleteAt *JsonTime `gorm:"column:deleteAt" sql:"index" json:"deleteAt"`
+	ID        string    `gorm:"column:id;primary_key"  json:"id"`
+	CreatedAt JsonTime  `gorm:"column:createdAt"  json:"createdAt"`
+	UpdatedAt JsonTime  `gorm:"column:updatedAt"  json:"updatedAt"`
+	DeletedAt *time.Time `gorm:"column:deletedAt" sql:"index" json:"deletedAt"`
 }
 
 // 分页条件
@@ -55,7 +55,6 @@ func Create(value interface{}) error {
 func Save(value interface{}) error {
 	return db.Save(value).Error
 }
-
 
 // Updates
 func Updates(where interface{}, value interface{}) error {
@@ -159,7 +158,7 @@ func ScanList(model, where interface{}, out interface{}, orders ...string) error
 func GetPage(model, where interface{}, out interface{}, indexPage *IndexPage, order string, whereOrder ...PageWhere) error {
 	db := db.Model(model).Where(where)
 	if order != "" {
-		db = db.Order(order)
+		db = db.Order(order).Order("id DESC")
 	}
 	if len(whereOrder) > 0 {
 		for _, wo := range whereOrder {
@@ -179,6 +178,6 @@ func GetPage(model, where interface{}, out interface{}, indexPage *IndexPage, or
 }
 
 // PluckList
-func PluckList(model, where interface{}, out interface{}, fieldName string) error {
+func PluckList(model, where interface{}, fieldName string, out interface{}) error {
 	return db.Model(model).Where(where).Pluck(fieldName, out).Error
 }

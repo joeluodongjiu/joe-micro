@@ -14,7 +14,7 @@ type AdminUser struct {
 	RealName string `gorm:"column:real_name;size:32;" json:"real_name" form:"real_name"`         // 真实姓名
 	Email    string `gorm:"column:email;size:64;" json:"email" form:"email"`                     // 邮箱
 	Phone    string `gorm:"column:phone;type:char(20);" json:"phone" form:"phone"`               // 手机号
-	Status   uint64 `gorm:"column:status;type:tinyint(1);not null;" json:"status" form:"status"` // 状态(1:启用  2.禁用)
+	Status   uint8  `gorm:"column:status;type:tinyint(1);not null;" json:"status" form:"status"` // 状态(1:启用  2.禁用)
 	Salt     string `gorm:"Column:salt" json:"-"`
 }
 
@@ -28,14 +28,14 @@ func (bc *AdminUser) BeforeCreate(scope *gorm.Scope) error {
 	if err != nil {
 		return err
 	}
-	bc.CreateAt = orm.JsonTime(time.Now())
-	bc.UpdateAt = orm.JsonTime(time.Now())
+	bc.CreatedAt = orm.JsonTime(time.Now())
+	bc.UpdatedAt = orm.JsonTime(time.Now())
 	return nil
 }
 
 // 更新前
 func (bu *AdminUser) BeforeUpdate(scope *gorm.Scope) error {
-	bu.UpdateAt = orm.JsonTime(time.Now())
+	bu.UpdatedAt = orm.JsonTime(time.Now())
 	return nil
 }
 

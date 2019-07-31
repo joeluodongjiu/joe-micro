@@ -42,8 +42,8 @@ func resSuccessMsg(c *gin.Context) {
 }
 
 //参数错误
-func resBadRequest(c *gin.Context, err error) {
-	ret := ResponseModel{Code: BAD_REQUEST, Message: "参数绑定错误: " + err.Error()}
+func resBadRequest(c *gin.Context, msg string) {
+	ret := ResponseModel{Code: BAD_REQUEST, Message: "参数绑定错误: " + msg}
 	resJSON(c, http.StatusOK, &ret)
 }
 
@@ -118,7 +118,7 @@ func (l *ListReq) getListQuery(c *gin.Context) (err error) {
 	l.Key = c.Query("key")
 	query = c.Query("orderType")
 	if query == "" {
-		query = "createAt"
+		query = "createdAt"
 	}
 	l.Sort = query
 	query = c.Query("orderType")

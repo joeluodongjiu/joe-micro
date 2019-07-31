@@ -26,13 +26,13 @@ func (bc *Role) BeforeCreate(scope *gorm.Scope) error {
 	if err != nil {
 		return err
 	}
-	bc.CreateAt = orm.JsonTime(time.Now())
-	bc.UpdateAt = orm.JsonTime(time.Now())
+	bc.CreatedAt = orm.JsonTime(time.Now())
+	bc.UpdatedAt = orm.JsonTime(time.Now())
 	return nil
 }
 
 // 更新前
 func (bu *Role) BeforeUpdate(scope *gorm.Scope) error {
-	bu.UpdateAt = orm.JsonTime(time.Now())
+	bu.UpdatedAt = orm.JsonTime(time.Now())
 	return nil
 }

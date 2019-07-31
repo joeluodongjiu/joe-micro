@@ -23,13 +23,47 @@ func (bc *AdminUserRoles) BeforeCreate(scope *gorm.Scope) error {
 	if err != nil {
 		return err
 	}
-	bc.CreateAt = orm.JsonTime(time.Now())
-	bc.UpdateAt = orm.JsonTime(time.Now())
+	bc.CreatedAt = orm.JsonTime(time.Now())
+	bc.UpdatedAt = orm.JsonTime(time.Now())
 	return nil
 }
 
 // 更新前
 func (bu *AdminUserRoles) BeforeUpdate(scope *gorm.Scope) error {
-	bu.UpdateAt = orm.JsonTime(time.Now())
+	bu.UpdatedAt = orm.JsonTime(time.Now())
 	return nil
+}
+
+// 分配用户角色
+func (AdminUserRoles) SetRole(uid string, roleids []string) error {
+	tx := orm.GetDB().Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if err := tx.Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err := tx.Where(&AdminUserRoles{UserID: uid}).Unscoped().Delete(&AdminUserRoles{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if len(roleids) > 0 {
+		for _, rid := range roleids {
+			rm := new(AdminUserRoles)
+			rm.RoleID = rid
+			rm.UserID = uid
+			if err := tx.Create(rm).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+	if  err:=CsbinAddRoleForUser(uid);err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit().Error
 }

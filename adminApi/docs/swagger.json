@@ -209,7 +209,7 @@
                         "required": true,
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/handler.adminUserReq"
+                            "$ref": "#/definitions/handler.createAdminUserReq"
                         }
                     }
                 ],
@@ -366,7 +366,7 @@
                     },
                     {
                         "type": "string",
-                        "description": "排序字段,默认为createAt",
+                        "description": "排序字段,默认为createdAt",
                         "name": "sort",
                         "in": "query"
                     },
@@ -391,6 +391,64 @@
                             "items": {
                                 "$ref": "#/definitions/model.AdminUser"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/user_mana/setRole": {
+            "post": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_mana   用户管理模块"
+                ],
+                "summary": "为用户添加角色权限",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户uid",
+                        "name": "uid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "角色id",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.ids"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{code:0,msg:ok}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
                         }
                     },
                     "400": {
@@ -440,8 +498,56 @@
                         "required": true,
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/handler.adminUserReq"
+                            "$ref": "#/definitions/handler.updateAdminUserReq"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{code:0,msg:ok}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/user_mana/usersRoleIDList": {
+            "get": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_mana   用户管理模块"
+                ],
+                "summary": "获取用户下的角色ID列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户uid",
+                        "name": "uid",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -482,8 +588,13 @@
                 }
             }
         },
-        "handler.adminUserReq": {
+        "handler.createAdminUserReq": {
             "type": "object",
+            "required": [
+                "password",
+                "status",
+                "username"
+            ],
             "properties": {
                 "email": {
                     "description": "邮箱",
@@ -553,6 +664,35 @@
                 "password": {
                     "description": "密码",
                     "type": "string"
+                },
+                "username": {
+                    "description": "用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "handler.updateAdminUserReq": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "邮箱",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "手机号",
+                    "type": "string"
+                },
+                "real_name": {
+                    "description": "真实姓名",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态(1:启用  2.禁用)",
+                    "type": "integer"
                 },
                 "username": {
                     "description": "用户名",

@@ -9,7 +9,7 @@ definitions:
       msg:
         type: string
     type: object
-  handler.adminUserReq:
+  handler.createAdminUserReq:
     properties:
       email:
         description: 邮箱
@@ -29,6 +29,10 @@ definitions:
       username:
         description: 用户名
         type: string
+    required:
+    - password
+    - status
+    - username
     type: object
   handler.editPwdReq:
     properties:
@@ -63,6 +67,27 @@ definitions:
     required:
     - password
     - username
+    type: object
+  handler.updateAdminUserReq:
+    properties:
+      email:
+        description: 邮箱
+        type: string
+      password:
+        description: 密码
+        type: string
+      phone:
+        description: 手机号
+        type: string
+      real_name:
+        description: 真实姓名
+        type: string
+      status:
+        description: 状态(1:启用  2.禁用)
+        type: integer
+      username:
+        description: 用户名
+        type: string
     type: object
   model.AdminUser:
     properties:
@@ -209,7 +234,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/handler.adminUserReq'
+          $ref: '#/definitions/handler.createAdminUserReq'
           type: object
       produces:
       - application/json
@@ -306,7 +331,7 @@ paths:
         in: query
         name: num
         type: integer
-      - description: 排序字段,默认为createAt
+      - description: 排序字段,默认为createdAt
         in: query
         name: sort
         type: string
@@ -340,6 +365,43 @@ paths:
       summary: 获取admin用户列表
       tags:
       - user_mana   用户管理模块
+  /user_mana/setRole:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户uid
+        in: query
+        name: uid
+        required: true
+        type: string
+      - description: 角色id
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ids'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{code:0,msg:ok}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 为用户添加角色权限
+      tags:
+      - user_mana   用户管理模块
   /user_mana/update:
     post:
       consumes:
@@ -355,7 +417,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/handler.adminUserReq'
+          $ref: '#/definitions/handler.updateAdminUserReq'
           type: object
       produces:
       - application/json
@@ -375,6 +437,36 @@ paths:
       security:
       - MustToken: []
       summary: 更新admin用户
+      tags:
+      - user_mana   用户管理模块
+  /user_mana/usersRoleIDList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户uid
+        in: query
+        name: uid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{code:0,msg:ok}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 获取用户下的角色ID列表
       tags:
       - user_mana   用户管理模块
 securityDefinitions:

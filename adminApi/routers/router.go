@@ -56,6 +56,9 @@ func RegisterRouter(api *gin.Engine) {
 	notCheckPermissionUrlArr = append(notCheckPermissionUrlArr, apiPrefix+"/user/info")
 	admin.Use(middleware.CasbinMiddleware(middleware.AllowPathPrefixSkipper(notCheckPermissionUrlArr...)))
 
+
+
+
 	userC := handler.UserController{} //用户操作
 	admin.POST("/user/login", userC.Login)
 	admin.GET("/user/logout", userC.Logout)
@@ -68,8 +71,8 @@ func RegisterRouter(api *gin.Engine) {
 	admin.POST("/user_mana/delete", user_manaC.Delete)
 	admin.POST("/user_mana/update", user_manaC.Update)
 	admin.POST("/user_mana/create", user_manaC.Create)
-	//admin.GET("/user_mana/adminsroleidlist", user_manaC.AdminsRoleIDList)
-	//admin.POST("/user_mana/setrole", user_manaC.SetRole)
+	admin.GET("/user_mana/users_roleid_list", user_manaC.UsersRoleIDList)
+	admin.POST("/user_mana/setrole", user_manaC.SetRole)
 
 	permission := admin.Group("/permission")
 	{

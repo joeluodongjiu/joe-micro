@@ -4,7 +4,6 @@ import (
 	"github.com/ahmetb/go-linq/v3"
 	"github.com/gin-gonic/gin"
 	"joe-micro/adminApi/model"
-	"joe-micro/adminApi/model/casbin"
 	"joe-micro/lib/cache"
 	"joe-micro/lib/config"
 	"joe-micro/lib/jwt"
@@ -34,7 +33,7 @@ type login struct {
 func (UserController) Login(c *gin.Context) {
 	var req login
 	if err := c.Bind(&req); err != nil {
-		resBadRequest(c, err)
+		resBadRequest(c, err.Error())
 		return
 	}
 	//获取用户记录
@@ -69,7 +68,7 @@ func (UserController) Login(c *gin.Context) {
 		return
 	}
 	//casbin 处理
-	err = casbin.CsbinAddRoleForUser(user.ID)
+	err = model.CsbinAddRoleForUser(user.ID)
 	if err != nil {
 		log.Error(err)
 		resErrSrv(c)
@@ -208,7 +207,7 @@ func (UserController) EditPwd(c *gin.Context) {
 	err := c.ShouldBind(&reqData)
 	if err != nil {
 		log.Warn(err)
-		resBadRequest(c, err)
+		resBadRequest(c, err.Error())
 		return
 	}
 	user := model.AdminUser{}

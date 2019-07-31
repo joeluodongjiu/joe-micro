@@ -10,8 +10,8 @@ import (
 //角色菜单关联表
 type RoleMenu struct {
 	orm.CommonModel
-	RoleID string `gorm:"column:role_id;not null;"` // 角色ID
-	MenuID string `gorm:"column:menu_id;not null;"` // 菜单ID
+	RoleID string `gorm:"column:role_id;not null;"  json:"role_id"` // 角色ID
+	MenuID string `gorm:"column:menu_id;not null;"  json:"menu_id"` // 菜单ID
 }
 
 // 表名

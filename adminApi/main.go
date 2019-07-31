@@ -25,6 +25,7 @@ import (
 // @in header
 // @name token
 
+
 func main() {
 	//统一日志到服务的日志
 	microLog.SetLogger(log.NewMicroLogger())

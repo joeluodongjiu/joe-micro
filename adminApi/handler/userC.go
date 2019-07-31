@@ -23,7 +23,7 @@ type login struct {
 
 // @Title 登录接口
 // @Summary 用户登录
-// @Tags user
+// @Tags user   用户操作
 // @Accept  json
 // @Produce  json
 // @Param   body    body    handler.login   false   "body"
@@ -92,7 +92,7 @@ func (UserController) Login(c *gin.Context) {
 
 // @Title 登出接口
 // @Summary 用户登出
-// @Tags user
+// @Tags user   用户操作
 // @Accept  json
 // @Produce  json
 // @Success 200 {object}  handler.ResponseModel 	"{code:0,msg:ok}"
@@ -116,7 +116,7 @@ func (UserController) Logout(c *gin.Context) {
 // 获取用户信息及可访问的权限菜单
 // @Title 获取用户信息及可访问的权限菜单
 // @Summary 获取用户信息及可访问的权限菜单
-// @Tags user
+// @Tags user   用户操作
 // @Accept  json
 // @Produce  json
 // @Success 200 {object}  handler.ResponseModel 	"{code:0,msg:ok}"
@@ -132,6 +132,7 @@ func (UserController) Info(c *gin.Context) {
 	var menuData []model.Menu
 	var err error
 	// 如何是超级管理员则可以看所有菜单
+	log.Warn(uid)
 	if uid == SUPER_ADMIN_ID {
 		err = orm.Find(&model.Menu{}, &menuData, "parent_id asc", "sequence asc")
 		if err != nil {
@@ -184,14 +185,14 @@ type MenuModel struct {
 }
 
 type editPwdReq struct {
-	OldPassword string `json:"old_password" binding:"required" ` //旧密码
-	NewPassword string `json:"new_password" binding:"required" ` //新密码
+	OldPassword string `json:"old_password" binding:"required" `  //旧密码
+	NewPassword string `json:"new_password" validate:"required" ` //新密码
 }
 
 // 获取用户信息及可访问的权限菜单
 // @Title 用户修改密码
 // @Summary 用户修改密码
-// @Tags user
+// @Tags user   用户操作
 // @Accept  json
 // @Produce  json
 // @Param   body    body    handler.editPwdReq    true     "修改密码"

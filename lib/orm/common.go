@@ -56,6 +56,7 @@ func Save(value interface{}) error {
 	return db.Save(value).Error
 }
 
+
 // Updates
 func Updates(where interface{}, value interface{}) error {
 	return db.Model(where).Updates(value).Error

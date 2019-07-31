@@ -42,6 +42,15 @@ func JWTAuth(skipper ...SkipperFunc) gin.HandlerFunc {
 				"msg":  "token 失效",
 			})
 			c.Abort()
+			return
+		}
+		if  claims.UID == ""{
+			c.JSON(http.StatusOK, gin.H{
+				"code":  4,
+				"msg":  "无效 token",
+			})
+			c.Abort()
+			return
 		}
 		// 继续交由下一个路由处理,并将解析出的信息传递下去
 		c.Set("UID", claims.UID)

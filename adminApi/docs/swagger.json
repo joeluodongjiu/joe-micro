@@ -24,7 +24,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "user   用户操作"
                 ],
                 "summary": "用户修改密码",
                 "parameters": [
@@ -75,7 +75,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "user   用户操作"
                 ],
                 "summary": "获取用户信息及可访问的权限菜单",
                 "responses": {
@@ -109,7 +109,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "user   用户操作"
                 ],
                 "summary": "用户登录",
                 "parameters": [
@@ -159,7 +159,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "user"
+                    "user   用户操作"
                 ],
                 "summary": "用户登出",
                 "responses": {
@@ -167,6 +167,105 @@
                         "description": "{code:0,msg:ok}",
                         "schema": {
                             "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/user_mana/delete": {
+            "post": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_mana   用户管理模块"
+                ],
+                "summary": "删除admin用户",
+                "parameters": [
+                    {
+                        "description": "id 列表",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.ids"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "用户详情",
+                        "schema": {
+                            "$ref": "#/definitions/model.AdminUser"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/user_mana/detail": {
+            "get": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_mana   用户管理模块"
+                ],
+                "summary": "获取admin用户详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户uid",
+                        "name": "uid",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "用户详情",
+                        "schema": {
+                            "$ref": "#/definitions/model.AdminUser"
                         }
                     },
                     "400": {
@@ -201,6 +300,38 @@
                     "user_mana   用户管理模块"
                 ],
                 "summary": "获取admin用户列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码,默认为1",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "返回条数,默认为10",
+                        "name": "num",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段,默认为createAt",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键字",
+                        "name": "key",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序规则,默认为DESC",
+                        "name": "orderType",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "用户列表",
@@ -209,6 +340,57 @@
                             "items": {
                                 "$ref": "#/definitions/model.AdminUser"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/user_mana/update": {
+            "post": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user_mana   用户管理模块"
+                ],
+                "summary": "更新admin用户",
+                "parameters": [
+                    {
+                        "description": "id 列表",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.ids"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "用户详情",
+                        "schema": {
+                            "$ref": "#/definitions/model.AdminUser"
                         }
                     },
                     "400": {
@@ -259,6 +441,21 @@
                 }
             }
         },
+        "handler.ids": {
+            "type": "object",
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "description": "id 列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "handler.login": {
             "type": "object",
             "required": [
@@ -283,19 +480,12 @@
                     "description": "邮箱",
                     "type": "string"
                 },
-                "password": {
-                    "description": "密码",
-                    "type": "string"
-                },
                 "phone": {
                     "description": "手机号",
                     "type": "string"
                 },
                 "real_name": {
                     "description": "真实姓名",
-                    "type": "string"
-                },
-                "salt": {
                     "type": "string"
                 },
                 "status": {

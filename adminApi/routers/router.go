@@ -46,7 +46,7 @@ func RegisterRouter(api *gin.Engine) {
 	var notCheckLoginUrlArr []string
 	notCheckLoginUrlArr = append(notCheckLoginUrlArr, apiPrefix+"/user/login")
 	//jwt 用户鉴权
-	api.Use(middleware.JWTAuth(middleware.AllowPathPrefixSkipper(notCheckLoginUrlArr...)))
+	admin.Use(middleware.JWTAuth(middleware.AllowPathPrefixSkipper(notCheckLoginUrlArr...)))
 
 	//casbin  权限管理
 	var notCheckPermissionUrlArr []string
@@ -54,7 +54,7 @@ func RegisterRouter(api *gin.Engine) {
 	notCheckPermissionUrlArr = append(notCheckPermissionUrlArr, apiPrefix+"/user/logout")
 	notCheckPermissionUrlArr = append(notCheckPermissionUrlArr, apiPrefix+"/user/edit_pwd")
 	notCheckPermissionUrlArr = append(notCheckPermissionUrlArr, apiPrefix+"/user/info")
-	api.Use(middleware.CasbinMiddleware(middleware.AllowPathPrefixSkipper(notCheckPermissionUrlArr...)))
+	admin.Use(middleware.CasbinMiddleware(middleware.AllowPathPrefixSkipper(notCheckPermissionUrlArr...)))
 
 	userC := handler.UserController{} //用户操作
 	admin.POST("/user/login", userC.Login)
@@ -64,12 +64,12 @@ func RegisterRouter(api *gin.Engine) {
 
 	user_manaC := handler.UserManagementController{} //用户管理
 	admin.GET("/user_mana/list", user_manaC.List)
-/*	admin.GET("/user_mana/detail", user_manaC.Detail)
-	admin.GET("/user_mana/adminsroleidlist", user_manaC.AdminsRoleIDList)
+	admin.GET("/user_mana/detail", user_manaC.Detail)
 	admin.POST("/user_mana/delete", user_manaC.Delete)
 	admin.POST("/user_mana/update", user_manaC.Update)
-	admin.POST("/user_mana/create", user_manaC.Create)
-	admin.POST("/user_mana/setrole", user_manaC.SetRole)*/
+	//admin.POST("/user_mana/create", user_manaC.Create)
+	//admin.GET("/user_mana/adminsroleidlist", user_manaC.AdminsRoleIDList)
+	//admin.POST("/user_mana/setrole", user_manaC.SetRole)
 
 	permission := admin.Group("/permission")
 	{

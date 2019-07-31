@@ -47,7 +47,7 @@ func (Menu) GetMenusByUid(uid string, menus *[]Menu) (err error) {
 	sql := `select * from admin_menu
 	      where id in (
 					select menu_id from admin_role_menu where 
-				  role_id in (select role_id from admin_role where user_id=?)
+				  role_id in (select role_id from admin_user_roles where user_id=?)
 				)`
 	err = orm.GetDB().Raw(sql, uid).Find(menus).Error
 	return

@@ -40,7 +40,7 @@ func (UserManagementController) List(c *gin.Context) {
 		var arr []interface{}
 		arr = append(arr, v)
 		arr = append(arr, v)
-		whereOrder = append(whereOrder, orm.PageWhere{Where: "user_name like ? or real_name like ?", Value: arr})
+		whereOrder = append(whereOrder, orm.PageWhere{Where: "username like ? or real_name like ?", Value: arr})
 	}
 	list := make([]model.AdminUser, 0)
 	var indexPage orm.IndexPage

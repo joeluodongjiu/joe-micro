@@ -6,6 +6,7 @@ import (
 	"sync"
 )
 
+//替换gin的binding
 func Init() {
 	valid:= new(DefaultValidator)
 	binding.Validator = valid

@@ -13,7 +13,6 @@ type UserManagementController struct{} //用户管理控制器
 // 获取admin用户列表
 // @Summary 获取admin用户列表
 // @Tags   user_mana   用户管理模块
-// @Tag.description  用户管理模块
 // @Accept  json
 // @Produce  json
 // @Param   page         query    int       false     "页码,默认为1"
@@ -21,6 +20,8 @@ type UserManagementController struct{} //用户管理控制器
 // @Param   sort         query    string    false     "排序字段,默认为createdAt"
 // @Param   key          query    string    false     "搜索关键字"
 // @Param   orderType    query    string    false     "排序规则,默认为DESC"
+// @Param   beginAt      query    string    false     "开始时间"
+// @Param   endAt        query    string    false     "结束时间"
 // @Success 200 {array}   model.AdminUser 	"用户列表"
 // @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
 // @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
@@ -40,7 +41,17 @@ func (UserManagementController) List(c *gin.Context) {
 		var arr []interface{}
 		arr = append(arr, v)
 		arr = append(arr, v)
-		whereOrder = append(whereOrder, orm.PageWhere{Where: "username like ? or real_name like ?", Value: arr})
+		whereOrder = append(whereOrder, orm.PageWhere{Where: " username like ? or real_name like ? ", Value: arr})
+	}
+	if reqData.BeginAt != "" {
+		var arr []interface{}
+		arr = append(arr, reqData.BeginAt)
+		whereOrder = append(whereOrder, orm.PageWhere{Where: " createAt > ? ", Value: arr})
+	}
+	if reqData.EndAt != "" {
+		var arr []interface{}
+		arr = append(arr, reqData.EndAt)
+		whereOrder = append(whereOrder, orm.PageWhere{Where: " createAt < ? ", Value: arr})
 	}
 	list := make([]model.AdminUser, 0)
 	var indexPage orm.IndexPage
@@ -113,6 +124,7 @@ func (UserManagementController) Delete(c *gin.Context) {
 	admin := model.AdminUser{}
 	err = admin.Delete(uids.Ids) //删除用户 和 其他的一些关联数据
 	if err != nil {
+		log.Error(err)
 		resErrSrv(c)
 		return
 	}
@@ -120,12 +132,13 @@ func (UserManagementController) Delete(c *gin.Context) {
 }
 
 type updateAdminUserReq struct {
-	UserName string `gorm:"column:username;size:32;not null;" json:"username" ` // 用户名
-	Password string `gorm:"column:password;not null;" json:"password" `         // 密码
-	RealName string `gorm:"column:real_name;size:32;" json:"real_name" `        // 真实姓名
-	Email    string `gorm:"column:email;size:64;" json:"email" `                // 邮箱
-	Phone    string `gorm:"column:phone;type:char(20);" json:"phone" `          // 手机号
-	Status   uint8  `gorm:"column:status" json:"status"  binding:"max=2"`       // 状态(1:启用  2.禁用)
+	ID       string `gorm:"column:id" json:"id"  binding:"required"`                       //用户uid
+	UserName string `gorm:"column:username;size:32;not null;" json:"username" `            // 用户名
+	Password string `gorm:"column:password;not null;" json:"password" binding:"password" ` // 密码
+	RealName string `gorm:"column:real_name;size:32;" json:"real_name" `                   // 真实姓名
+	Email    string `gorm:"column:email;size:64;" json:"email" `                           // 邮箱
+	Phone    string `gorm:"column:phone;type:char(20);" json:"phone" `                     // 手机号
+	Status   uint8  `gorm:"column:status" json:"status"  binding:"int=1,2"`                // 状态(1:启用  2.禁用)
 }
 
 // 更新admin用户
@@ -141,19 +154,14 @@ type updateAdminUserReq struct {
 // @Security MustToken
 // @Router /user_mana/update [post]
 func (UserManagementController) Update(c *gin.Context) {
-	uid, exist := c.GetQuery("uid")
-	if !exist {
-		resBadRequest(c, "uid不能为空")
-		return
-	}
-	adminUser := updateAdminUserReq{}
-	err := c.ShouldBind(&adminUser)
+	reqData := updateAdminUserReq{}
+	err := c.ShouldBind(&reqData)
 	if err != nil {
 		resBadRequest(c, err.Error())
 		return
 	}
 	where := model.AdminUser{}
-	where.ID = uid
+	where.ID = reqData.ID
 	oldAdminUser := model.AdminUser{}
 	notFound, err := orm.First(&where, &oldAdminUser)
 	if err != nil {
@@ -161,15 +169,15 @@ func (UserManagementController) Update(c *gin.Context) {
 			resBusinessP(c, "没有此条记录")
 			return
 		}
-		log.Warn(err)
+		log.Error(err)
 		resErrSrv(c)
 		return
 	}
-	if adminUser.Password != "" {
+	if reqData.Password != "" {
 		//更新密码
-		adminUser.Password = toolfunc.EncUserPwd(adminUser.Password, oldAdminUser.Salt)
+		reqData.Password = toolfunc.EncUserPwd(reqData.Password, oldAdminUser.Salt)
 	}
-	err = orm.Updates(where, adminUser)
+	err = orm.Updates(where, reqData)
 	if err != nil {
 		log.Warn(err)
 		resErrSrv(c)
@@ -215,7 +223,7 @@ func (UserManagementController) Create(c *gin.Context) {
 	adminUser.Password = toolfunc.EncUserPwd(reqData.Password, adminUser.Salt)
 	err = orm.Create(&adminUser)
 	if err != nil {
-		log.Warn(err)
+		log.Error(err)
 		resErrSrv(c)
 		return
 	}
@@ -233,7 +241,7 @@ func (UserManagementController) Create(c *gin.Context) {
 // @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
 // @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
 // @Security MustToken
-// @Router /user_mana/usersRoleIDList [get]
+// @Router /user_mana/users_roleid_list [get]
 func (UserManagementController) UsersRoleIDList(c *gin.Context) {
 	uid, exist := c.GetQuery("uid")
 	if !exist {
@@ -244,7 +252,7 @@ func (UserManagementController) UsersRoleIDList(c *gin.Context) {
 	where := model.AdminUserRoles{UserID: uid}
 	err := orm.PluckList(&model.AdminUserRoles{}, &where, "role_id", &roleList)
 	if err != nil {
-		log.Warn(err)
+		log.Error(err)
 		resErrSrv(c)
 		return
 	}
@@ -262,7 +270,7 @@ func (UserManagementController) UsersRoleIDList(c *gin.Context) {
 // @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
 // @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
 // @Security MustToken
-// @Router /user_mana/setRole [post]
+// @Router /user_mana/set_role [post]
 func (UserManagementController) SetRole(c *gin.Context) {
 	uid, exist := c.GetQuery("uid")
 	if !exist {

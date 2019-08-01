@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"joe-micro/lib/orm"
 	"net/http"
-	"strconv"
 )
 
 const (
@@ -72,11 +71,9 @@ func resErrCli(c *gin.Context, err error) {
 }
 
 type ResponsePageData struct {
-	IndexPage orm.IndexPage   `json:"index"`
-	Res   interface{} `json:"res"`
+	IndexPage orm.IndexPage `json:"index"`
+	Res       interface{}   `json:"res"`
 }
-
-
 
 type ResponsePage struct {
 	Code    int              `json:"code"`
@@ -91,43 +88,35 @@ func resSuccessPage(c *gin.Context, indexPage orm.IndexPage, list interface{}) {
 }
 
 type ListReq struct {
-	Page      uint64 `json:"page" form:"page" `          //页数
-	Num       uint64 `json:"num"  form:"num" `           //数量
-	Key       string `json:"key" form:"key" `            //搜索关键字
-	Sort      string `json:"sort" form:"sort"`           // 排序字段
-	OrderType string `json:"orderType" form:"orderType"` //排序规则
+	Page      uint64 `json:"page" form:"page" `                                     //页数
+	Num       uint64 `json:"num"  form:"num" `                                      //数量
+	Key       string `json:"key" form:"key" `                                       //搜索关键字
+	Sort      string `json:"sort" form:"sort"`                                      //排序字段
+	OrderType string `json:"orderType" form:"orderType"`                            //排序规则
+	BeginAt   string `json:"beginAt" form:"beginAt" binding:"datetime=Y-m-d H:m:s"` //开始时间
+	EndAt     string `json:"endAt" form:"endAt" binding:"datetime=Y-m-d H:m:s"`     //结束时间
 }
 
 func (l *ListReq) getListQuery(c *gin.Context) (err error) {
-	query := c.Query("page")
-	if query == "" {
-		query = "1"
-	}
-	l.Page, err = strconv.ParseUint(query, 0, 64)
+	err=c.ShouldBind(c)
 	if err != nil {
 		return err
 	}
-	query = c.Query("num")
-	if query == "" {
-		query = "10"
+	//给默认参数
+	if  l.Page == 0 {
+		l.Page = 1
 	}
-	l.Num, err = strconv.ParseUint(query, 0, 64)
-	if err != nil {
-		return err
+	if  l.Num == 0 {
+		l.Num = 10
 	}
-	l.Key = c.Query("key")
-	query = c.Query("orderType")
-	if query == "" {
-		query = "createdAt"
+	if  l.Sort == ""{
+		l.Sort = "createdAt"
 	}
-	l.Sort = query
-	query = c.Query("orderType")
-	if query == "" {
-		query = "DESC"
+	if  l.OrderType == ""{
+		l.OrderType = "DESC"
 	}
-	l.OrderType = query
-	if l.OrderType != "ASC" && l.OrderType != "DESC" {
-		return errors.New("orderType 参数错误")
+	if  l.OrderType != "DESC"  && l.OrderType != "ASC" {
+		return errors.New("orderType 不是期望的值")
 	}
 	l.Sort = l.Sort + "  " + l.OrderType
 	return

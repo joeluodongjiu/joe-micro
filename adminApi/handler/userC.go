@@ -16,7 +16,7 @@ import (
 type UserController struct{} //用户操作控制器
 
 type login struct {
-	Username string `json:"username" binding:"required" ` //用户名
+	Username string `json:"username" binding:"required" `          //用户名
 	Password string `json:"password" binding:"required|password" ` // 密码
 }
 
@@ -43,6 +43,7 @@ func (UserController) Login(c *gin.Context) {
 	notFound, err := orm.First(&where, &user)
 	if err != nil {
 		if notFound {
+			log.Warnf("没有此条记录 %v",req.Username)
 			resBusinessP(c, "没有此条记录")
 			return
 		}
@@ -184,8 +185,8 @@ type MenuModel struct {
 }
 
 type editPwdReq struct {
-	OldPassword string `json:"old_password" binding:"required" `  //旧密码
-	NewPassword string `json:"new_password" validate:"required" ` //新密码
+	OldPassword string `json:"old_password" binding:"required" `          //旧密码
+	NewPassword string `json:"new_password" binding:"required|password" ` //新密码
 }
 
 // 获取用户信息及可访问的权限菜单

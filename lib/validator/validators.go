@@ -214,9 +214,9 @@ func (self *StringValidator) Validate(params map[string]interface{}, val reflect
  * 当只有 Min 或者 Max 的值，另一个值为 nil 时，验证器为等于有值的对应值
  * 当只有 Min 或者 Max 的值，另一个值为 _ 时，验证器为忽略带 _ 的值
  * 栗子
- * integer=1,2 表示 Min=1,Max=2,就是说 1 <= num <= 2
- * integer=1 表示 Min=1,Max=nil,就是说 num = 1
- * integer=1,_ 表示 Min=1,Max=_,就是说 1 <= num
+ * int=1,2 表示 Min=1,Max=2,就是说 1 <= num <= 2
+ * int=1 表示 Min=1,Max=nil,就是说 num = 1
+ * int=1,_ 表示 Min=1,Max=_,就是说 1 <= num
  */
 type IntegerValidator struct {
 	EMsg string
@@ -224,7 +224,7 @@ type IntegerValidator struct {
 }
 
 func (self *IntegerValidator) Validate(params map[string]interface{}, val reflect.Value, args ...string) (bool, error) {
-	eMsg := "[name] is not allow integer"
+	eMsg := "[name] is not allow int "
 	//IntConst
 	eParamsMap := map[string]string{
 		"name": params["name"].(string),

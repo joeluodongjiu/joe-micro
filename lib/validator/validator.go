@@ -68,7 +68,7 @@ var arrayErrorMap = map[string]string{
 var defaultValidator = map[string]interface{}{
 	"required": &RequiredValidator{},
 	"string":   &StringValidator{},
-	"integer":  &IntegerValidator{},
+	"int":      &IntegerValidator{},
 	"array":    &ArrayValidator{},
 	"email":    &EmailValidator{},
 	"url":      &UrlValidator{},
@@ -195,7 +195,7 @@ func (self *myValidator) validate(s interface{}, lazyFlag bool, syncMap *sync.Ma
 			if tag != "" {
 				//没有配置 required，并且 field 为 0 值的，直接跳过
 				isZeroValue := isZeroValue(fieldInfo)
-				if isZeroValue && !strings.Contains(tag, "required") && !self.skipOnStructEmpty {
+				if isZeroValue && !strings.Contains(tag, "required") && self.skipOnStructEmpty {
 					continue
 				}
 				errArr = self.validateValueFromTag(tag, lazyFlag, fieldTypeInfo, fieldInfo, syncMap, parentKey)

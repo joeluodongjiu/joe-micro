@@ -57,21 +57,31 @@ func RegisterRouter(api *gin.Engine) {
 	notCheckPermissionUrlArr = append(notCheckPermissionUrlArr, apiPrefix+"/user/edit_pwd")
 	notCheckPermissionUrlArr = append(notCheckPermissionUrlArr, apiPrefix+"/user/info")
 	admin.Use(middleware.CasbinMiddleware(middleware.AllowPathPrefixSkipper(notCheckPermissionUrlArr...)))
-
-	userC := handler.UserController{} //用户操作
+	//用户操作
+	userC := handler.UserController{}
 	admin.POST("/user/login", userC.Login)
 	admin.GET("/user/logout", userC.Logout)
 	admin.GET("/user/info", userC.Info)
 	admin.POST("/user/edit_pwd", userC.EditPwd)
-
-	user_manaC := handler.UserManagementController{} //用户管理
+	//用户管理
+	user_manaC := handler.UserManagementController{}
 	admin.GET("/user_mana/list", user_manaC.List)
 	admin.GET("/user_mana/detail", user_manaC.Detail)
 	admin.POST("/user_mana/delete", user_manaC.Delete)
 	admin.POST("/user_mana/update", user_manaC.Update)
 	admin.POST("/user_mana/create", user_manaC.Create)
 	admin.GET("/user_mana/users_roleid_list", user_manaC.UsersRoleIDList)
-	admin.POST("/user_mana/setrole", user_manaC.SetRole)
+	admin.POST("/user_mana/set_role", user_manaC.SetRole)
+	//角色管理
+	roleC := handler.RoleController{}
+	admin.GET("/role/list", roleC.List)
+	admin.GET("/role/detail", roleC.Detail)
+	admin.POST("/role/update", roleC.Update)
+	admin.POST("/role/delete", roleC.Delete)
+	admin.POST("/role/create", roleC.Create)
+	admin.GET("/role/role_menuid_list", roleC.RoleMenuIDList)
+	admin.GET("/role/allrole", roleC.AllRole)
+	admin.POST("/role/set_role", roleC.SetRole)
 
 	permission := admin.Group("/permission")
 	{

@@ -9,12 +9,12 @@ import (
 	"joe-micro/adminApi/middleware"
 	"joe-micro/lib/log"
 	"joe-micro/lib/trace"
-	_ "joe-micro/lib/validator"    //自定义验证器
+	"joe-micro/lib/validator"
 )
 
 func Init() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode) //是否生产模式启动
-
+	validator.Init()             //自定义验证器 替换 gin 里面的验证器
 	router := gin.Default()
 
 	router.NoRoute(middleware.NoRouteHandler())

@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-func init() {
+func Init() {
 	valid:= new(DefaultValidator)
 	binding.Validator = valid
 }

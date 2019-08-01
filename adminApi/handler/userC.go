@@ -17,7 +17,7 @@ type UserController struct{} //用户操作控制器
 
 type login struct {
 	Username string `json:"username" binding:"required" ` //用户名
-	Password string `json:"password" binding:"required" ` // 密码
+	Password string `json:"password" binding:"required|password" ` // 密码
 }
 
 // @Title 登录接口
@@ -32,7 +32,7 @@ type login struct {
 // @Router /user/login [post]
 func (UserController) Login(c *gin.Context) {
 	var req login
-	if err := c.Bind(&req); err != nil {
+	if err := c.ShouldBind(&req); err != nil {
 		resBadRequest(c, err.Error())
 		return
 	}

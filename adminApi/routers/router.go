@@ -9,10 +9,12 @@ import (
 	"joe-micro/adminApi/middleware"
 	"joe-micro/lib/log"
 	"joe-micro/lib/trace"
+	_ "joe-micro/lib/validator"    //自定义验证器
 )
 
 func Init() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode) //是否生产模式启动
+
 	router := gin.Default()
 
 	router.NoRoute(middleware.NoRouteHandler())
@@ -55,9 +57,6 @@ func RegisterRouter(api *gin.Engine) {
 	notCheckPermissionUrlArr = append(notCheckPermissionUrlArr, apiPrefix+"/user/edit_pwd")
 	notCheckPermissionUrlArr = append(notCheckPermissionUrlArr, apiPrefix+"/user/info")
 	admin.Use(middleware.CasbinMiddleware(middleware.AllowPathPrefixSkipper(notCheckPermissionUrlArr...)))
-
-
-
 
 	userC := handler.UserController{} //用户操作
 	admin.POST("/user/login", userC.Login)

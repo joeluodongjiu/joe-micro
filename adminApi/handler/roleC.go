@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"joe-micro/adminApi/model"
+	"joe-micro/adminApi/model/casbin"
 	"joe-micro/lib/log"
 	"joe-micro/lib/orm"
 )
@@ -136,9 +137,101 @@ func (RoleController) Update(c *gin.Context) {
 	resSuccessMsg(c)
 }
 
-
 // 删除角色
+// @Summary 删除角色
+// @Tags   role   角色管理
+// @Accept  json
+// @Produce  json
+// @Param   body    body    handler.idsReq    true     "id 列表"
+// @Success 200 {object}   handler.ResponseModel 	"角色详情"
+// @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
+// @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
+// @Security MustToken
+// @Router /user_mana/delete [post]
+func (RoleController) Delete(c *gin.Context) {
+	ids := idsReq{}
+	err := c.ShouldBind(&ids)
+	if err != nil {
+		resBadRequest(c, err.Error())
+		return
+	}
+	role := model.Role{}
+	err = role.Delete(ids.Ids) //删除角色
+	if err != nil {
+		log.Error(err)
+		resErrSrv(c)
+		return
+	}
+	//删除角色权限
+	casbin.CasbinDeleteRole(ids.Ids)
+	resSuccessMsg(c)
+}
 
-func (RoleController) Delete(c *gin.Context){
+type roleCreateReq struct {
+	Memo     string `gorm:"column:memo;" json:"memo" `                            // 备注
+	Name     string `gorm:"column:name;not null;" json:"name" binding:"required"` // 名称
+	Sequence uint64 `gorm:"column:sequence;" json:"sequence" `                    // 排序值
+}
 
+func (RoleController) Create(c *gin.Context) {
+	reqData := roleCreateReq{}
+	err := c.ShouldBind(&reqData)
+	if err != nil {
+		resBadRequest(c, err.Error())
+		return
+	}
+	role := model.Role{}
+	role.Memo = reqData.Memo
+	role.Name = reqData.Name
+	role.Sequence = reqData.Sequence
+	err = orm.Create(&role)
+	if err != nil {
+		log.Error(err)
+		resErrSrv(c)
+		return
+	}
+	resSuccess(c, gin.H{"id": role.ID})
+}
+
+//获取角色下的菜单列表
+func (RoleController) RoleMenuIDList(c *gin.Context) {
+	roleid, exist := c.GetQuery("role_id")
+	if !exist {
+		resBadRequest(c, "缺少角色id")
+		return
+	}
+	var menuIDList []string
+	where := model.RoleMenu{RoleID: roleid}
+	err := orm.PluckList(&model.RoleMenu{}, &where, "menu_id", &menuIDList)
+	if err != nil {
+		log.Error(err)
+		resErrSrv(c)
+		return
+	}
+	resSuccess(c, menuIDList)
+}
+
+type setRoleWithMenusReq struct {
+	RoleID  string   `json:"role_id" binding:"required"`  //角色id
+	MenuIds []string `json:"menu_ids" binding:"required"` //菜单id
+}
+
+// 设置角色菜单权限
+func (RoleController) SetRoleWithMenus(c *gin.Context) {
+	reqData := setRoleWithMenusReq{}
+	err := c.ShouldBind(&reqData)
+	if err != nil {
+		resBadRequest(c, err.Error())
+		return
+	}
+	rm := model.RoleMenu{}
+	err = rm.SetRole(reqData.RoleID, reqData.MenuIds)
+	if err != nil {
+		log.Error(err)
+		resErrSrv(c)
+		return
+	}
+	//给角色添加权限
+	go casbin.CasbinSetRolePermission(reqData.RoleID)
+	resSuccessMsg(c)
 }

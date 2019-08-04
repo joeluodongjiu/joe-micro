@@ -17,6 +17,46 @@ const (
 	SUPER_ADMIN_ID = "1"   //超级管理员
 )
 
+type ListReq struct {
+	Page      uint64 `json:"page" form:"page" `                                     //页数
+	Num       uint64 `json:"num"  form:"num" `                                      //数量
+	Key       string `json:"key" form:"key" `                                       //搜索关键字
+	Sort      string `json:"sort" form:"sort"`                                      //排序字段
+	OrderType string `json:"orderType" form:"orderType"`                            //排序规则
+	BeginAt   string `json:"beginAt" form:"beginAt" binding:"datetime=Y-m-d H:m:s"` //开始时间
+	EndAt     string `json:"endAt" form:"endAt" binding:"datetime=Y-m-d H:m:s"`     //结束时间
+}
+
+func (l *ListReq) getListQuery(c *gin.Context) (err error) {
+	err = c.ShouldBind(c)
+	if err != nil {
+		return err
+	}
+	//给默认参数
+	if l.Page == 0 {
+		l.Page = 1
+	}
+	if l.Num == 0 {
+		l.Num = 10
+	}
+	if l.Sort == "" {
+		l.Sort = "createdAt"
+	}
+	if l.OrderType == "" {
+		l.OrderType = "DESC"
+	}
+	if l.OrderType != "DESC" && l.OrderType != "ASC" {
+		return errors.New("orderType 不是期望的值")
+	}
+	l.Sort = l.Sort + "  " + l.OrderType
+	return
+}
+
+//请求公共结构体
+type idsReq struct {
+	Ids []string `json:"ids"  binding:"required" ` //id 列表
+}
+
 type ResponseModel struct {
 	Code    int         `json:"code"`
 	Message string      `json:"msg"`
@@ -85,39 +125,4 @@ type ResponsePage struct {
 func resSuccessPage(c *gin.Context, indexPage orm.IndexPage, list interface{}) {
 	ret := ResponsePage{Code: SUCCESS_CODE, Message: "ok", Data: ResponsePageData{IndexPage: indexPage, Res: list}}
 	resJSON(c, http.StatusOK, &ret)
-}
-
-type ListReq struct {
-	Page      uint64 `json:"page" form:"page" `                                     //页数
-	Num       uint64 `json:"num"  form:"num" `                                      //数量
-	Key       string `json:"key" form:"key" `                                       //搜索关键字
-	Sort      string `json:"sort" form:"sort"`                                      //排序字段
-	OrderType string `json:"orderType" form:"orderType"`                            //排序规则
-	BeginAt   string `json:"beginAt" form:"beginAt" binding:"datetime=Y-m-d H:m:s"` //开始时间
-	EndAt     string `json:"endAt" form:"endAt" binding:"datetime=Y-m-d H:m:s"`     //结束时间
-}
-
-func (l *ListReq) getListQuery(c *gin.Context) (err error) {
-	err=c.ShouldBind(c)
-	if err != nil {
-		return err
-	}
-	//给默认参数
-	if  l.Page == 0 {
-		l.Page = 1
-	}
-	if  l.Num == 0 {
-		l.Num = 10
-	}
-	if  l.Sort == ""{
-		l.Sort = "createdAt"
-	}
-	if  l.OrderType == ""{
-		l.OrderType = "DESC"
-	}
-	if  l.OrderType != "DESC"  && l.OrderType != "ASC" {
-		return errors.New("orderType 不是期望的值")
-	}
-	l.Sort = l.Sort + "  " + l.OrderType
-	return
 }

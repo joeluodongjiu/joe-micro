@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"joe-micro/adminApi/model"
+	"joe-micro/adminApi/model/casbin"
 	"joe-micro/lib/log"
 	"joe-micro/lib/orm"
 	"joe-micro/lib/toolfunc"
@@ -99,25 +100,23 @@ func (UserManagementController) Detail(c *gin.Context) {
 	resSuccess(c, user)
 }
 
-type ids struct {
-	Ids []string `json:"ids"  validate:"required" ` //id 列表
-}
+
 
 // 删除admin用户
 // @Summary 删除admin用户
 // @Tags   user_mana   用户管理模块
 // @Accept  json
 // @Produce  json
-// @Param   body    body    handler.ids    true     "id 列表"
+// @Param   body    body    handler.idsReq    true     "id 列表"
 // @Success 200 {object}  handler.ResponseModel 	"{code:0,msg:ok}"
 // @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
 // @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
 // @Security MustToken
 // @Router /user_mana/delete [post]
 func (UserManagementController) Delete(c *gin.Context) {
-	var uids ids
+	var uids idsReq
 	err := c.ShouldBind(&uids)
-	if err != nil || len(uids.Ids) == 0 {
+	if err != nil  {
 		resBadRequest(c, err.Error())
 		return
 	}
@@ -265,7 +264,7 @@ func (UserManagementController) UsersRoleIDList(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param   uid     query   string         true         "用户uid"
-// @Param   body    body    handler.ids    true         "角色id"
+// @Param   body    body    handler.idsReq    true         "角色id"
 // @Success 200 {object}  handler.ResponseModel 	"{code:0,msg:ok}"
 // @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
 // @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
@@ -277,15 +276,21 @@ func (UserManagementController) SetRole(c *gin.Context) {
 		resBadRequest(c, "uid不能为空")
 		return
 	}
-	var roleids ids
+	var roleids idsReq
 	err := c.Bind(&roleids)
 	if err != nil {
 		resBadRequest(c, err.Error())
 		return
 	}
 	userRole := model.AdminUserRoles{}
-	err = userRole.SetRole(uid, roleids.Ids) //添加记录 并 在casbin添加权限
+	err = userRole.SetRole(uid, roleids.Ids) //添加记录
 	if err != nil {
+		log.Error(err)
+		resErrSrv(c)
+		return
+	}
+	//给用户添加角色 添加权限
+	if  err:= casbin.CasbinAddRoleForUser(uid);err != nil {
 		log.Error(err)
 		resErrSrv(c)
 		return

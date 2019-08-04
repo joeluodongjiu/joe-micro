@@ -1,7 +1,8 @@
-package model
+package casbin
 
 import (
 	"github.com/casbin/casbin"
+	"joe-micro/adminApi/model"
 	"joe-micro/lib/log"
 	"joe-micro/lib/orm"
 )
@@ -39,9 +40,9 @@ func init() {
 		log.Error(err)
 		return
 	}
-	var roles []Role
+	var roles []model.Role
 	//查询所有角色
-	err = orm.Find(&Role{}, &roles)
+	err = orm.Find(&model.Role{}, &roles)
 	if err != nil {
 		return
 	}
@@ -73,15 +74,15 @@ func CasbinSetRolePermission(roleid string) {
 
 // 为每个角色赋值权限
 func setRolePermission(enforcer *casbin.Enforcer, roleid string) {
-	var rolemenus []RoleMenu
-	err := orm.Find(&RoleMenu{RoleID: roleid}, &rolemenus)
+	var rolemenus []model.RoleMenu
+	err := orm.Find(&model.RoleMenu{RoleID: roleid}, &rolemenus)
 	if err != nil {
 		log.Info(err)
 		return
 	}
 	for _, rolemenu := range rolemenus {
-		menu := Menu{}
-		where := Menu{}
+		menu := model.Menu{}
+		where := model.Menu{}
 		where.ID = rolemenu.MenuID
 		_, err = orm.First(&where, &menu)
 		if err != nil {
@@ -106,8 +107,8 @@ func CasbinAddRoleForUser(userid string) (err error) {
 	}
 	uid := PrefixUserID + userid
 	enforcer.DeleteRolesForUser(uid)
-	var adminsroles []AdminUserRoles
-	err = orm.Find(&AdminUserRoles{UserID: userid}, &adminsroles)
+	var adminsroles []model.AdminUserRoles
+	err = orm.Find(&model.AdminUserRoles{UserID: userid}, &adminsroles)
 	if err != nil {
 		return
 	}

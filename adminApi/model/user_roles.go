@@ -61,9 +61,5 @@ func (AdminUserRoles) SetRole(uid string, roleids []string) error {
 			}
 		}
 	}
-	if  err:=CsbinAddRoleForUser(uid);err != nil {
-		tx.Rollback()
-		return err
-	}
 	return tx.Commit().Error
 }

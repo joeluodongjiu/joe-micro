@@ -35,3 +35,34 @@ func (bu *RoleMenu) BeforeUpdate(scope *gorm.Scope) error {
 	bu.UpdatedAt =orm.JsonTime(time.Now())
 	return nil
 }
+
+
+// 设置角色菜单权限
+func (RoleMenu) SetRole(roleid string, menuids []string) error {
+	tx := orm.GetDB().Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if err := tx.Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err := tx.Where(&RoleMenu{RoleID: roleid}).Delete(&RoleMenu{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if len(menuids) > 0 {
+		for _, mid := range menuids {
+			rm := new(RoleMenu)
+			rm.RoleID = roleid
+			rm.MenuID = mid
+			if err := tx.Create(rm).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+	return tx.Commit().Error
+}

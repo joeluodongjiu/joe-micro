@@ -52,7 +52,7 @@ func init() {
 }
 
 // 删除角色
-func CsbinDeleteRole(roleids []string) {
+func CasbinDeleteRole(roleids []string) {
 	if enforcer == nil {
 		return
 	}
@@ -63,7 +63,7 @@ func CsbinDeleteRole(roleids []string) {
 }
 
 // 设置角色权限
-func CsbinSetRolePermission(roleid string) {
+func CasbinSetRolePermission(roleid string) {
 	if enforcer == nil {
 		return
 	}
@@ -95,12 +95,12 @@ func setRolePermission(enforcer *casbin.Enforcer, roleid string) {
 }
 
 // 检查用户是否有权限
-func CsbinCheckPermission(userID, url, methodtype string) (bool, error) {
+func CasbinCheckPermission(userID, url, methodtype string) (bool, error) {
 	return enforcer.EnforceSafe(PrefixUserID+userID, url, methodtype)
 }
 
 // 给用户添加角色,可以在登录是赋值到内存,也可以启动项目时加进内存
-func CsbinAddRoleForUser(userid string) (err error) {
+func CasbinAddRoleForUser(userid string) (err error) {
 	if enforcer == nil {
 		return
 	}

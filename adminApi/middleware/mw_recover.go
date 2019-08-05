@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"joe-micro/lib/log"
@@ -41,7 +42,10 @@ func stack(skip int) []byte {
 		if !ok {
 			break
 		}
-		log.Error(buf, "%s:%d (0x%x)\n", file, line, pc)
+		_, err:= fmt.Fprintf(buf, "%s:%d (0x%x)\n", file, line, pc)
+		if err != nil {
+			continue
+		}
 		if file != lastFile {
 			data, err := ioutil.ReadFile(file)
 			if err != nil {
@@ -50,7 +54,10 @@ func stack(skip int) []byte {
 			lines = bytes.Split(data, []byte{'\n'})
 			lastFile = file
 		}
-		log.Error(buf, "\t%s: %s\n", function(pc), source(lines, line))
+		_, err = fmt.Fprintf(buf, "\t%s: %s\n", function(pc), source(lines, line))
+		if err != nil {
+			continue
+		}
 	}
 	return buf.Bytes()
 }

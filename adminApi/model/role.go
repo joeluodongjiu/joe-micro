@@ -36,3 +36,27 @@ func (bu *Role) BeforeUpdate(scope *gorm.Scope) error {
 	bu.UpdatedAt = orm.JsonTime(time.Now())
 	return nil
 }
+
+
+// 删除角色及关联数据
+func (Role) Delete(roleids []string) error {
+	tx := orm.GetDB().Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if err := tx.Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err := tx.Where("id in (?)", roleids).Delete(&Role{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err := tx.Where("role_id in (?)", roleids).Delete(&RoleMenu{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit().Error
+}

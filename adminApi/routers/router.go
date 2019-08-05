@@ -2,8 +2,8 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/swaggo/files"
-	"github.com/swaggo/gin-swagger"
+	//"github.com/swaggo/files"
+	//"github.com/swaggo/gin-swagger"
 	_ "joe-micro/adminApi/docs"
 	"joe-micro/adminApi/handler"
 	"joe-micro/adminApi/middleware"
@@ -24,8 +24,8 @@ func Init() *gin.Engine {
 	router.Use(log.GinLogger())
 
 	//swagger
-	url := ginSwagger.URL("http://localhost:9081/swagger/doc.json") // The url pointing to API definition
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
+	/*	url := ginSwagger.URL("http://localhost:9081/swagger/doc.json") // The url pointing to API definition
+		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))*/
 
 	// jaeger trace 追踪
 	router.Use(trace.TracerWrapper)
@@ -80,9 +80,22 @@ func RegisterRouter(api *gin.Engine) {
 	admin.POST("/role/delete", roleC.Delete)
 /*	admin.POST("/role/create", roleC.Create)
 	admin.GET("/role/role_menuid_list", roleC.RoleMenuIDList)
+<<<<<<< HEAD
 	admin.GET("/role/allrole", roleC.AllRole)
 	admin.POST("/role/set_role", roleC.SetRole)*/
 
+=======
+	admin.POST("/role/set_role_with_menus", roleC.SetRoleWithMenus)
+    //菜单管理
+	menuC := handler.MenuController{}
+	admin.GET("/menu/list", menuC.List)
+	admin.GET("/menu/detail", menuC.Detail)
+	admin.POST("/menu/delete", menuC.Delete)
+	admin.POST("/menu/update", menuC.Update)
+	admin.POST("/menu/create", menuC.Create)
+	admin.GET("/menu/allmenu", menuC.AllMenu)
+	admin.GET("/menu/menubuttonlist", menuC.MenuButtonList)
+>>>>>>> 61640e0a886ae8f5340f2fe7d1c4d32e69161f78
 	permission := admin.Group("/permission")
 	{
 		permission.GET("/readResource", func(c *gin.Context) {

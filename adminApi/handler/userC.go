@@ -4,6 +4,7 @@ import (
 	"github.com/ahmetb/go-linq/v3"
 	"github.com/gin-gonic/gin"
 	"joe-micro/adminApi/model"
+	"joe-micro/adminApi/model/casbin"
 	"joe-micro/lib/cache"
 	"joe-micro/lib/config"
 	"joe-micro/lib/jwt"
@@ -69,7 +70,7 @@ func (UserController) Login(c *gin.Context) {
 		return
 	}
 	//casbin 处理
-	err = model.CsbinAddRoleForUser(user.ID)
+	err = casbin.CasbinAddRoleForUser(user.ID)
 	if err != nil {
 		log.Error(err)
 		resErrSrv(c)

@@ -1,7 +1,8 @@
-package model
+package casbin
 
 import (
 	"github.com/casbin/casbin"
+	"joe-micro/adminApi/model"
 	"joe-micro/lib/log"
 	"joe-micro/lib/orm"
 )
@@ -39,9 +40,9 @@ func init() {
 		log.Error(err)
 		return
 	}
-	var roles []Role
+	var roles []model.Role
 	//查询所有角色
-	err = orm.Find(&Role{}, &roles)
+	err = orm.Find(&model.Role{}, &roles)
 	if err != nil {
 		return
 	}
@@ -52,7 +53,7 @@ func init() {
 }
 
 // 删除角色
-func CsbinDeleteRole(roleids []string) {
+func CasbinDeleteRole(roleids []string) {
 	if enforcer == nil {
 		return
 	}
@@ -63,7 +64,7 @@ func CsbinDeleteRole(roleids []string) {
 }
 
 // 设置角色权限
-func CsbinSetRolePermission(roleid string) {
+func CasbinSetRolePermission(roleid string) {
 	if enforcer == nil {
 		return
 	}
@@ -73,15 +74,15 @@ func CsbinSetRolePermission(roleid string) {
 
 // 为每个角色赋值权限
 func setRolePermission(enforcer *casbin.Enforcer, roleid string) {
-	var rolemenus []RoleMenu
-	err := orm.Find(&RoleMenu{RoleID: roleid}, &rolemenus)
+	var rolemenus []model.RoleMenu
+	err := orm.Find(&model.RoleMenu{RoleID: roleid}, &rolemenus)
 	if err != nil {
 		log.Info(err)
 		return
 	}
 	for _, rolemenu := range rolemenus {
-		menu := Menu{}
-		where := Menu{}
+		menu := model.Menu{}
+		where := model.Menu{}
 		where.ID = rolemenu.MenuID
 		_, err = orm.First(&where, &menu)
 		if err != nil {
@@ -95,19 +96,19 @@ func setRolePermission(enforcer *casbin.Enforcer, roleid string) {
 }
 
 // 检查用户是否有权限
-func CsbinCheckPermission(userID, url, methodtype string) (bool, error) {
+func CasbinCheckPermission(userID, url, methodtype string) (bool, error) {
 	return enforcer.EnforceSafe(PrefixUserID+userID, url, methodtype)
 }
 
 // 给用户添加角色,可以在登录是赋值到内存,也可以启动项目时加进内存
-func CsbinAddRoleForUser(userid string) (err error) {
+func CasbinAddRoleForUser(userid string) (err error) {
 	if enforcer == nil {
 		return
 	}
 	uid := PrefixUserID + userid
 	enforcer.DeleteRolesForUser(uid)
-	var adminsroles []AdminUserRoles
-	err = orm.Find(&AdminUserRoles{UserID: userid}, &adminsroles)
+	var adminsroles []model.AdminUserRoles
+	err = orm.Find(&model.AdminUserRoles{UserID: userid}, &adminsroles)
 	if err != nil {
 		return
 	}

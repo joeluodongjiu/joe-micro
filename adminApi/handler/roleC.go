@@ -26,7 +26,7 @@ type RoleController struct{} //角色管理控制器
 // @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
 // @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
 // @Security MustToken
-// @Router /user_mana/list [get]
+// @Router /role/list [get]
 func (RoleController) List(c *gin.Context) {
 	reqData := ListReq{}
 	err := reqData.getListQuery(c)
@@ -82,7 +82,7 @@ func (RoleController) List(c *gin.Context) {
 // @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
 // @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
 // @Security MustToken
-// @Router /user_mana/detail [get]
+// @Router /role/detail [get]
 func (RoleController) Detail(c *gin.Context) {
 	id, exist := c.GetQuery("id")
 	if !exist {
@@ -118,7 +118,7 @@ type updateRoleReq struct {
 // @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
 // @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
 // @Security MustToken
-// @Router /user_mana/update [post]
+// @Router /role/update [post]
 func (RoleController) Update(c *gin.Context) {
 	reqData := updateRoleReq{}
 	err := c.ShouldBind(&reqData)
@@ -147,7 +147,7 @@ func (RoleController) Update(c *gin.Context) {
 // @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
 // @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
 // @Security MustToken
-// @Router /user_mana/delete [post]
+// @Router /role/delete [post]
 func (RoleController) Delete(c *gin.Context) {
 	ids := idsReq{}
 	err := c.ShouldBind(&ids)
@@ -173,6 +173,17 @@ type roleCreateReq struct {
 	Sequence uint64 `gorm:"column:sequence;" json:"sequence" `                    // 排序值
 }
 
+// 创建角色
+// @Summary 创建角色
+// @Tags   role   角色管理
+// @Accept  json
+// @Produce  json
+// @Param   body    body    handler.roleCreateReq    true     "角色信息"
+// @Success 200 {object}   handler.ResponseModel 	"{code:0,msg:ok,data:{id:"id"}}"
+// @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
+// @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
+// @Security MustToken
+// @Router /role/create [post]
 func (RoleController) Create(c *gin.Context) {
 	reqData := roleCreateReq{}
 	err := c.ShouldBind(&reqData)
@@ -194,6 +205,16 @@ func (RoleController) Create(c *gin.Context) {
 }
 
 //获取角色下的菜单列表
+// @Summary 获取角色下的菜单列表
+// @Tags   role   角色管理
+// @Accept  json
+// @Produce  json
+// @Param   role_id   query    string    true     "角色id"
+// @Success 200 {array}   string 	    "{data:["string","string"]}"
+// @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
+// @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
+// @Security MustToken
+// @Router /role/set_role_with_menus [get]
 func (RoleController) RoleMenuIDList(c *gin.Context) {
 	roleid, exist := c.GetQuery("role_id")
 	if !exist {
@@ -217,6 +238,16 @@ type setRoleWithMenusReq struct {
 }
 
 // 设置角色菜单权限
+// @Summary 设置角色菜单权限
+// @Tags   role   角色管理
+// @Accept  json
+// @Produce  json
+// @Param   body   body    handler.setRoleWithMenusReq    true     "角色id"
+// @Success 200 {object}   handler.ResponseModel 	    "{code:0,msg:ok}"
+// @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
+// @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
+// @Security MustToken
+// @Router /role/set_role_with_menus [get]
 func (RoleController) SetRoleWithMenus(c *gin.Context) {
 	reqData := setRoleWithMenusReq{}
 	err := c.ShouldBind(&reqData)

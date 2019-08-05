@@ -43,10 +43,9 @@ definitions:
         description: 旧密码
         type: string
     required:
-    - new_password
     - old_password
     type: object
-  handler.ids:
+  handler.idsReq:
     properties:
       ids:
         description: id 列表
@@ -65,13 +64,105 @@ definitions:
         description: 用户名
         type: string
     required:
-    - password
     - username
+    type: object
+  handler.menuCreateReq:
+    properties:
+      code:
+        description: 菜单代码
+        type: string
+      menu_type:
+        description: 菜单类型 1模块2菜单3操作
+        type: integer
+      name:
+        description: 菜单名称
+        type: string
+      operate_type:
+        description: 操作类型 read/write
+        type: string
+      parent_id:
+        description: 父级ID
+        type: string
+      sequence:
+        description: 排序值
+        type: integer
+      status:
+        description: 状态(1:启用 2:不启用)
+        type: integer
+      url:
+        description: 菜单URL
+        type: string
+    required:
+    - name
+    - operate_type
+    type: object
+  handler.menuUpdateReq:
+    properties:
+      code:
+        description: 菜单代码
+        type: string
+      id:
+        description: id
+        type: string
+      menu_type:
+        description: 菜单类型 1模块2菜单3操作
+        type: integer
+      name:
+        description: 菜单名称
+        type: string
+      operate_type:
+        description: 操作类型 read/write
+        type: string
+      parent_id:
+        description: 父级ID
+        type: string
+      sequence:
+        description: 排序值
+        type: integer
+      status:
+        description: 状态(1:启用 2:不启用)
+        type: integer
+      url:
+        description: 菜单URL
+        type: string
+    required:
+    - id
+    type: object
+  handler.roleCreateReq:
+    properties:
+      memo:
+        description: 备注
+        type: string
+      name:
+        description: 名称
+        type: string
+      sequence:
+        description: 排序值
+        type: integer
+    required:
+    - name
+    type: object
+  handler.setRoleWithMenusReq:
+    properties:
+      menu_ids:
+        description: 菜单id
+        items:
+          type: string
+        type: array
+      role_id:
+        description: 角色id
+        type: string
+    required:
+    - menu_ids
+    - role_id
     type: object
   handler.updateAdminUserReq:
     properties:
       email:
         description: 邮箱
+        type: string
+      id:
+        description: 用户uid
         type: string
       password:
         description: 密码
@@ -88,6 +179,25 @@ definitions:
       username:
         description: 用户名
         type: string
+    required:
+    - id
+    type: object
+  handler.updateRoleReq:
+    properties:
+      id:
+        description: 用户uid
+        type: string
+      memo:
+        description: 备注
+        type: string
+      name:
+        description: 名称
+        type: string
+      sequence:
+        description: 排序值
+        type: integer
+    required:
+    - id
     type: object
   model.AdminUser:
     properties:
@@ -107,6 +217,45 @@ definitions:
         description: 用户名
         type: string
     type: object
+  model.Menu:
+    properties:
+      code:
+        description: 菜单代码
+        type: string
+      menu_type:
+        description: 菜单类型 1模块2菜单3操作
+        type: integer
+      name:
+        description: 菜单名称
+        type: string
+      operate_type:
+        description: 操作类型 read/write
+        type: string
+      parent_id:
+        description: 父级ID
+        type: string
+      sequence:
+        description: 排序值
+        type: integer
+      status:
+        description: 状态(1:启用 2:不启用)
+        type: integer
+      url:
+        description: 菜单URL
+        type: string
+    type: object
+  model.Role:
+    properties:
+      memo:
+        description: 备注
+        type: string
+      name:
+        description: 名称
+        type: string
+      sequence:
+        description: 排序值
+        type: integer
+    type: object
 host: localhost:9081
 info:
   contact: {}
@@ -115,6 +264,402 @@ info:
   title: 微服务的管理端api文档demo
   version: "1.0"
 paths:
+  /menu/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 菜单信息
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/handler.menuCreateReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回菜单id
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 创建菜单
+      tags:
+      - menu   菜单管理
+  /menu/delete:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 菜单id列表
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/handler.idsReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回成功
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 删除菜单
+      tags:
+      - menu   菜单管理
+  /menu/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 页码,默认为1
+        in: query
+        name: page
+        type: integer
+      - description: 返回条数,默认为10
+        in: query
+        name: num
+        type: integer
+      - description: 排序字段,默认为createdAt
+        in: query
+        name: sort
+        type: string
+      - description: 搜索关键字
+        in: query
+        name: key
+        type: string
+      - description: 排序规则,默认为DESC
+        in: query
+        name: orderType
+        type: string
+      - description: 开始时间
+        in: query
+        name: beginAt
+        type: string
+      - description: 结束时间
+        in: query
+        name: endAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 菜单列表
+          schema:
+            items:
+              $ref: '#/definitions/model.Menu'
+            type: array
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 获取菜单列表
+      tags:
+      - menu   菜单管理
+  /menu/menubuttonlist:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户uid
+        in: query
+        name: uid
+        required: true
+        type: string
+      - description: 菜单code
+        in: query
+        name: menuCode
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回权限列表string数组
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 获取一个用户的菜单有权限的操作列表
+      tags:
+      - menu   菜单管理
+  /menu/update:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 菜单信息
+        in: body
+        name: body
+        schema:
+          $ref: '#/definitions/handler.menuUpdateReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回ok
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 更新菜单
+      tags:
+      - menu   菜单管理
+  /role/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 角色信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.roleCreateReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{code:0,msg:ok,data:{id:"id"}}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 创建角色
+      tags:
+      - role   角色管理
+  /role/delete:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: id 列表
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.idsReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 角色详情
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 删除角色
+      tags:
+      - role   角色管理
+  /role/detail:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 角色id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{code:0,msg:ok}'
+          schema:
+            $ref: '#/definitions/model.AdminUser'
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 获取角色详情
+      tags:
+      - role   角色管理
+  /role/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 页码,默认为1
+        in: query
+        name: page
+        type: integer
+      - description: 返回条数,默认为10
+        in: query
+        name: num
+        type: integer
+      - description: 排序字段,默认为createdAt
+        in: query
+        name: sort
+        type: string
+      - description: 搜索关键字
+        in: query
+        name: key
+        type: string
+      - description: 排序规则,默认为DESC
+        in: query
+        name: orderType
+        type: string
+      - description: 开始时间
+        in: query
+        name: beginAt
+        type: string
+      - description: 结束时间
+        in: query
+        name: endAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 角色列表
+          schema:
+            items:
+              $ref: '#/definitions/model.Role'
+            type: array
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 获取角色列表
+      tags:
+      - role   角色管理
+  /role/set_role_with_menus:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 角色id
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.setRoleWithMenusReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{code:0,msg:ok}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 设置角色菜单权限
+      tags:
+      - role   角色管理
+  /role/update:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 角色信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.updateRoleReq'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 角色详情
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "400":
+          description: '{code:1,msg:无效的请求参数}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+        "500":
+          description: '{code:-1,msg:服务器故障}'
+          schema:
+            $ref: '#/definitions/handler.ResponseModel'
+      security:
+      - MustToken: []
+      summary: 更新角色信息
+      tags:
+      - role   角色管理
   /user/edit_pwd:
     post:
       consumes:
@@ -266,7 +811,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/handler.ids'
+          $ref: '#/definitions/handler.idsReq'
           type: object
       produces:
       - application/json
@@ -343,6 +888,14 @@ paths:
         in: query
         name: orderType
         type: string
+      - description: 开始时间
+        in: query
+        name: beginAt
+        type: string
+      - description: 结束时间
+        in: query
+        name: endAt
+        type: string
       produces:
       - application/json
       responses:
@@ -365,7 +918,7 @@ paths:
       summary: 获取admin用户列表
       tags:
       - user_mana   用户管理模块
-  /user_mana/setRole:
+  /user_mana/set_role:
     post:
       consumes:
       - application/json
@@ -380,7 +933,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/handler.ids'
+          $ref: '#/definitions/handler.idsReq'
           type: object
       produces:
       - application/json
@@ -439,7 +992,7 @@ paths:
       summary: 更新admin用户
       tags:
       - user_mana   用户管理模块
-  /user_mana/usersRoleIDList:
+  /user_mana/users_roleid_list:
     get:
       consumes:
       - application/json

@@ -10,6 +10,635 @@
     "host": "localhost:9081",
     "basePath": "/api/admin",
     "paths": {
+        "/menu/create": {
+            "post": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menu   菜单管理"
+                ],
+                "summary": "创建菜单",
+                "parameters": [
+                    {
+                        "description": "菜单信息",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.menuCreateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "返回菜单id",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/menu/delete": {
+            "post": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menu   菜单管理"
+                ],
+                "summary": "删除菜单",
+                "parameters": [
+                    {
+                        "description": "菜单id列表",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.idsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "返回成功",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/menu/list": {
+            "get": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menu   菜单管理"
+                ],
+                "summary": "获取菜单列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码,默认为1",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "返回条数,默认为10",
+                        "name": "num",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段,默认为createdAt",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键字",
+                        "name": "key",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序规则,默认为DESC",
+                        "name": "orderType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间",
+                        "name": "beginAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "结束时间",
+                        "name": "endAt",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "菜单列表",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Menu"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/menu/menubuttonlist": {
+            "get": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menu   菜单管理"
+                ],
+                "summary": "获取一个用户的菜单有权限的操作列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户uid",
+                        "name": "uid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "菜单code",
+                        "name": "menuCode",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "返回权限列表string数组",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/menu/update": {
+            "post": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menu   菜单管理"
+                ],
+                "summary": "更新菜单",
+                "parameters": [
+                    {
+                        "description": "菜单信息",
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.menuUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "返回ok",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/role/create": {
+            "post": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role   角色管理"
+                ],
+                "summary": "创建角色",
+                "parameters": [
+                    {
+                        "description": "角色信息",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.roleCreateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{code:0,msg:ok,data:{id:\"id\"}}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/role/delete": {
+            "post": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role   角色管理"
+                ],
+                "summary": "删除角色",
+                "parameters": [
+                    {
+                        "description": "id 列表",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.idsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "角色详情",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/role/detail": {
+            "get": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role   角色管理"
+                ],
+                "summary": "获取角色详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "角色id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{code:0,msg:ok}",
+                        "schema": {
+                            "$ref": "#/definitions/model.AdminUser"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/role/list": {
+            "get": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role   角色管理"
+                ],
+                "summary": "获取角色列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码,默认为1",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "返回条数,默认为10",
+                        "name": "num",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序字段,默认为createdAt",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键字",
+                        "name": "key",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序规则,默认为DESC",
+                        "name": "orderType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间",
+                        "name": "beginAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "结束时间",
+                        "name": "endAt",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "角色列表",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Role"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/role/set_role_with_menus": {
+            "get": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role   角色管理"
+                ],
+                "summary": "设置角色菜单权限",
+                "parameters": [
+                    {
+                        "description": "角色id",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.setRoleWithMenusReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{code:0,msg:ok}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
+        "/role/update": {
+            "post": {
+                "security": [
+                    {
+                        "MustToken": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role   角色管理"
+                ],
+                "summary": "更新角色信息",
+                "parameters": [
+                    {
+                        "description": "角色信息",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/handler.updateRoleReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "角色详情",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "400": {
+                        "description": "{code:1,msg:无效的请求参数}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    },
+                    "500": {
+                        "description": "{code:-1,msg:服务器故障}",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseModel"
+                        }
+                    }
+                }
+            }
+        },
         "/user/edit_pwd": {
             "post": {
                 "security": [
@@ -260,7 +889,7 @@
                         "required": true,
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/handler.ids"
+                            "$ref": "#/definitions/handler.idsReq"
                         }
                     }
                 ],
@@ -381,6 +1010,18 @@
                         "description": "排序规则,默认为DESC",
                         "name": "orderType",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间",
+                        "name": "beginAt",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "结束时间",
+                        "name": "endAt",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -408,7 +1049,7 @@
                 }
             }
         },
-        "/user_mana/setRole": {
+        "/user_mana/set_role": {
             "post": {
                 "security": [
                     {
@@ -440,7 +1081,7 @@
                         "required": true,
                         "schema": {
                             "type": "object",
-                            "$ref": "#/definitions/handler.ids"
+                            "$ref": "#/definitions/handler.idsReq"
                         }
                     }
                 ],
@@ -524,7 +1165,7 @@
                 }
             }
         },
-        "/user_mana/usersRoleIDList": {
+        "/user_mana/users_roleid_list": {
             "get": {
                 "security": [
                     {
@@ -625,7 +1266,6 @@
         "handler.editPwdReq": {
             "type": "object",
             "required": [
-                "new_password",
                 "old_password"
             ],
             "properties": {
@@ -639,7 +1279,7 @@
                 }
             }
         },
-        "handler.ids": {
+        "handler.idsReq": {
             "type": "object",
             "required": [
                 "ids"
@@ -657,7 +1297,6 @@
         "handler.login": {
             "type": "object",
             "required": [
-                "password",
                 "username"
             ],
             "properties": {
@@ -671,11 +1310,143 @@
                 }
             }
         },
+        "handler.menuCreateReq": {
+            "type": "object",
+            "required": [
+                "name",
+                "operate_type"
+            ],
+            "properties": {
+                "code": {
+                    "description": "菜单代码",
+                    "type": "string"
+                },
+                "menu_type": {
+                    "description": "菜单类型 1模块2菜单3操作",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "菜单名称",
+                    "type": "string"
+                },
+                "operate_type": {
+                    "description": "操作类型 read/write",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "父级ID",
+                    "type": "string"
+                },
+                "sequence": {
+                    "description": "排序值",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态(1:启用 2:不启用)",
+                    "type": "integer"
+                },
+                "url": {
+                    "description": "菜单URL",
+                    "type": "string"
+                }
+            }
+        },
+        "handler.menuUpdateReq": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "code": {
+                    "description": "菜单代码",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "id",
+                    "type": "string"
+                },
+                "menu_type": {
+                    "description": "菜单类型 1模块2菜单3操作",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "菜单名称",
+                    "type": "string"
+                },
+                "operate_type": {
+                    "description": "操作类型 read/write",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "父级ID",
+                    "type": "string"
+                },
+                "sequence": {
+                    "description": "排序值",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态(1:启用 2:不启用)",
+                    "type": "integer"
+                },
+                "url": {
+                    "description": "菜单URL",
+                    "type": "string"
+                }
+            }
+        },
+        "handler.roleCreateReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "memo": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "sequence": {
+                    "description": "排序值",
+                    "type": "integer"
+                }
+            }
+        },
+        "handler.setRoleWithMenusReq": {
+            "type": "object",
+            "required": [
+                "menu_ids",
+                "role_id"
+            ],
+            "properties": {
+                "menu_ids": {
+                    "description": "菜单id",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "role_id": {
+                    "description": "角色id",
+                    "type": "string"
+                }
+            }
+        },
         "handler.updateAdminUserReq": {
             "type": "object",
+            "required": [
+                "id"
+            ],
             "properties": {
                 "email": {
                     "description": "邮箱",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "用户uid",
                     "type": "string"
                 },
                 "password": {
@@ -697,6 +1468,30 @@
                 "username": {
                     "description": "用户名",
                     "type": "string"
+                }
+            }
+        },
+        "handler.updateRoleReq": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "description": "用户uid",
+                    "type": "string"
+                },
+                "memo": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "sequence": {
+                    "description": "排序值",
+                    "type": "integer"
                 }
             }
         },
@@ -722,6 +1517,60 @@
                 "username": {
                     "description": "用户名",
                     "type": "string"
+                }
+            }
+        },
+        "model.Menu": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "菜单代码",
+                    "type": "string"
+                },
+                "menu_type": {
+                    "description": "菜单类型 1模块2菜单3操作",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "菜单名称",
+                    "type": "string"
+                },
+                "operate_type": {
+                    "description": "操作类型 read/write",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "父级ID",
+                    "type": "string"
+                },
+                "sequence": {
+                    "description": "排序值",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态(1:启用 2:不启用)",
+                    "type": "integer"
+                },
+                "url": {
+                    "description": "菜单URL",
+                    "type": "string"
+                }
+            }
+        },
+        "model.Role": {
+            "type": "object",
+            "properties": {
+                "memo": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "sequence": {
+                    "description": "排序值",
+                    "type": "integer"
                 }
             }
         }

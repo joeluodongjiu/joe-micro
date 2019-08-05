@@ -9,7 +9,23 @@ import (
 
 type MenuController struct{} //菜单管理控制器
 
-// 分页数据
+// 获取菜单列表
+// @Summary 获取菜单列表
+// @Tags   menu   菜单管理
+// @Accept  json
+// @Produce  json
+// @Param   page         query    int       false     "页码,默认为1"
+// @Param   num          query    int       false     "返回条数,默认为10"
+// @Param   sort         query    string    false     "排序字段,默认为createdAt"
+// @Param   key          query    string    false     "搜索关键字"
+// @Param   orderType    query    string    false     "排序规则,默认为DESC"
+// @Param   beginAt      query    string    false     "开始时间"
+// @Param   endAt        query    string    false     "结束时间"
+// @Success 200 {array}   model.Menu 	           "菜单列表"
+// @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
+// @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
+// @Security MustToken
+// @Router /menu/list [get]
 func (MenuController) List(c *gin.Context) {
 	reqData := ListReq{}
 	err := reqData.getListQuery(c)
@@ -86,7 +102,17 @@ type menuUpdateReq struct {
 	OperateType string `gorm:"column:operate_type;" json:"operate_type" `           // 操作类型 read/write
 }
 
-// 更新
+// 更新菜单
+// @Summary 更新菜单
+// @Tags   menu   菜单管理
+// @Accept  json
+// @Produce  json
+// @Param   body         body    handler.menuUpdateReq       false     "菜单信息"
+// @Success 200 {object}   handler.ResponseModel 	"返回ok"
+// @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
+// @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
+// @Security MustToken
+// @Router /menu/update [post]
 func (MenuController) Update(c *gin.Context) {
 	reqData := menuUpdateReq{}
 	err := c.Bind(&reqData)
@@ -116,7 +142,17 @@ type menuCreateReq struct {
 	OperateType string `gorm:"column:operate_type;" json:"operate_type" binding:"required"`   // 操作类型 read/write
 }
 
-//新增
+// 创建菜单
+// @Summary 创建菜单
+// @Tags   menu   菜单管理
+// @Accept  json
+// @Produce  json
+// @Param   body         body    handler.menuCreateReq       false     "菜单信息"
+// @Success 200 {object}   handler.ResponseModel 	           "返回菜单id"
+// @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
+// @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
+// @Security MustToken
+// @Router /menu/create [post]
 func (MenuController) Create(c *gin.Context) {
 	reqData := menuCreateReq{}
 	err := c.ShouldBind(&reqData)
@@ -143,7 +179,17 @@ func (MenuController) Create(c *gin.Context) {
 	resSuccess(c, gin.H{"id": menu.ID})
 }
 
-// 删除数据
+// 删除菜单
+// @Summary 删除菜单
+// @Tags   menu   菜单管理
+// @Accept  json
+// @Produce  json
+// @Param   body         body    handler.idsReq       false     "菜单id列表"
+// @Success 200 {object}   handler.ResponseModel 	           "返回成功"
+// @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
+// @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
+// @Security MustToken
+// @Router /menu/delete [post]
 func (MenuController) Delete(c *gin.Context) {
 	var ids idsReq
 	err := c.ShouldBind(&ids)
@@ -182,6 +228,17 @@ func InitMenu(menu model.Menu) {
 }
 
 // 获取一个用户的菜单有权限的操作列表
+// @Summary 获取一个用户的菜单有权限的操作列表
+// @Tags   menu   菜单管理
+// @Accept  json
+// @Produce  json
+// @Param   uid      query    string       true     "用户uid"
+// @Param   menuCode      query    string       true     "菜单code"
+// @Success 200 {object}   handler.ResponseModel 	           "返回权限列表string数组"
+// @Failure 400  {object} handler.ResponseModel "{code:1,msg:无效的请求参数}"
+// @Failure 500 {object} handler.ResponseModel  "{code:-1,msg:服务器故障}"
+// @Security MustToken
+// @Router /menu/menubuttonlist [get]
 func (MenuController) MenuButtonList(c *gin.Context) {
 	// 用户ID
 	uid, exist := c.GetQuery("uid")

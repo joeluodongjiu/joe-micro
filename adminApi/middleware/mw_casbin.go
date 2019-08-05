@@ -3,7 +3,7 @@ package middleware
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"joe-micro/adminApi/model"
+	"joe-micro/adminApi/model/casbin"
 	"joe-micro/lib/log"
 )
 
@@ -28,7 +28,7 @@ func CasbinMiddleware(skipper ...SkipperFunc) gin.HandlerFunc {
 		}
 		sub = c.GetString("UID")
 		log.Infof("权限认证:%v  %v  %v", sub, obj, act)
-		if b, err := model.CsbinCheckPermission(sub, obj, act); err != nil {
+		if b, err := casbin.CasbinCheckPermission(sub, obj, act); err != nil {
 			c.JSON(500, gin.H{
 				"code": -1,
 				"msg":  fmt.Sprintf("验证服务出现错误:%v", err),

@@ -139,7 +139,7 @@ func (MenuController) Create(c *gin.Context) {
 		resErrSrv(c)
 		return
 	}
-	//go InitMenu(menu)
+	go InitMenu(menu)
 	resSuccess(c, gin.H{"id": menu.ID})
 }
 
@@ -147,13 +147,13 @@ func (MenuController) Create(c *gin.Context) {
 func (MenuController) Delete(c *gin.Context) {
 	var ids idsReq
 	err := c.ShouldBind(&ids)
-	if err != nil  {
+	if err != nil {
 		resBadRequest(c, err.Error())
 		return
 	}
 	menu := model.Menu{}
 	//应该不让删除
-	err = menu.Delete(ids.Ids)  //删除菜单数据
+	err = menu.Delete(ids.Ids) //删除菜单数据
 	if err != nil {
 		log.Error(err)
 		resErrSrv(c)
@@ -162,35 +162,36 @@ func (MenuController) Delete(c *gin.Context) {
 	resSuccessMsg(c)
 }
 
-
-/*// 新增菜单后自动添加菜单下的常规操作
-func InitMenu(model sys.Menu) {
-	if model.MenuType != 2 {
+// 新增菜单后自动添加菜单下的常规操作
+func InitMenu(menu model.Menu) {
+	if menu.MenuType != 2 {
 		return
 	}
-	add := sys.Menu{Status: 1, ParentID: model.ID, URL: model.URL + "/create", Name: "新增", Sequence: 1, MenuType: 3, Code: model.Code + "Add", OperateType: "add"}
-	models.Create(&add)
-	del := sys.Menu{Status: 1, ParentID: model.ID, URL: model.URL + "/delete", Name: "删除", Sequence: 2, MenuType: 3, Code: model.Code + "Del", OperateType: "del"}
-	models.Create(&del)
-	view := sys.Menu{Status: 1, ParentID: model.ID, URL: model.URL + "/detail", Name: "查看", Sequence: 3, MenuType: 3, Code: model.Code + "View", OperateType: "view"}
-	models.Create(&view)
-	update := sys.Menu{Status: 1, ParentID: model.ID, URL: model.URL + "/update", Name: "编辑", Sequence: 4, MenuType: 3, Code: model.Code + "Update", OperateType: "update"}
-	models.Create(&update)
-	list := sys.Menu{Status: 1, ParentID: model.ID, URL: model.URL + "/list", Name: "分页api", Sequence: 5, MenuType: 3, Code: model.Code + "List", OperateType: "list"}
-	models.Create(&list)
-}*/
+	read := model.Menu{Status: 1, ParentID: menu.ID, URL: menu.URL + "/*", Name: "读", Sequence: 1, MenuType: 3, Code: menu.Code + "read", OperateType: "read"}
+	err := orm.Create(&read)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	write := model.Menu{Status: 1, ParentID: menu.ID, URL: menu.URL + "/*", Name: "写", Sequence: 2, MenuType: 3, Code: menu.Code + "write", OperateType: "write"}
+	err = orm.Create(&write)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+}
 
 // 获取一个用户的菜单有权限的操作列表
 func (MenuController) MenuButtonList(c *gin.Context) {
 	// 用户ID
-	uid,exist := c.GetQuery("uid")
+	uid, exist := c.GetQuery("uid")
 	if !exist {
-		resBadRequest(c,"缺少uid参数")
+		resBadRequest(c, "缺少uid参数")
 		return
 	}
-	menuCode,exist := c.GetQuery("menuCode")
+	menuCode, exist := c.GetQuery("menuCode")
 	if !exist {
-		resBadRequest(c,"缺少菜单码")
+		resBadRequest(c, "缺少菜单码")
 		return
 	}
 	btnList := []string{}

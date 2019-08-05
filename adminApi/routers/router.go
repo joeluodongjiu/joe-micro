@@ -78,10 +78,10 @@ func RegisterRouter(api *gin.Engine) {
 	admin.GET("/role/detail", roleC.Detail)
 	admin.POST("/role/update", roleC.Update)
 	admin.POST("/role/delete", roleC.Delete)
-	admin.POST("/role/create", roleC.Create)
+/*	admin.POST("/role/create", roleC.Create)
 	admin.GET("/role/role_menuid_list", roleC.RoleMenuIDList)
 	admin.GET("/role/allrole", roleC.AllRole)
-	admin.POST("/role/set_role", roleC.SetRole)
+	admin.POST("/role/set_role", roleC.SetRole)*/
 
 	permission := admin.Group("/permission")
 	{

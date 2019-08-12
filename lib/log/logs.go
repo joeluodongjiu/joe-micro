@@ -143,13 +143,14 @@ func withCaller(skip int) *logrus.Entry {
 	return logger.WithFields(logrus.Fields{key: value})
 }
 
-/*
-使用级别，参照一下
-- Fatal：网站挂了，或者极度不正常
-- Error：跟遇到的用户说对不起，可能有bug
-- Warn：记录一下，某事又发生了
-- Info：提示一切正常
-- debug：没问题，就看看堆栈*/
+/**
+ * 使用级别，参照一下
+ * - Fatal：网站挂了，或者极度不正常
+ * - Error：跟遇到的用户说对不起，可能有bug
+ * - Warn：记录一下，某事又发生了
+ * - Info：提示一切正常
+ * - debug：没问题，就看看堆栈
+ **/
 
 func Fatal(args ...interface{}) {
 	withCaller(2).Fatal(args...)

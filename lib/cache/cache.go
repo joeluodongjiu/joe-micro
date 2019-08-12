@@ -14,7 +14,7 @@ var myCache cache2.Cache
 func init() {
 	log.Info("redis  链接中。。。")
 	var err error
-	myCache, err = cache2.NewCache("redis", fmt.Sprintf(`{"key":"%v","conn":"%v","dbNum":"%v","password":"%v"}`,
+	myCache, err = cache2.NewCache("redis", fmt.Sprintf(`{"key":"%v","conn":"%v","dbNum":"%v","password":"%v","maxIdle":"30"}`,
 		config.C.Redis.Key, config.C.Redis.Host+":"+config.C.Redis.Port, config.C.Redis.Db, config.C.Redis.Auth))
 	if err != nil {
 		log.Fatal(err)

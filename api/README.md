@@ -4,7 +4,7 @@ This is the Web service
 
 Generated with
 
-```
+```shell
 micro new joe-micro/web --namespace=go.micro --type=web
 ```
 

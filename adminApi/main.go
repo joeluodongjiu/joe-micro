@@ -1,7 +1,6 @@
 package main
 
 import (
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/micro/cli"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/registry/consul"

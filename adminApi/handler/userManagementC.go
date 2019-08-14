@@ -47,12 +47,12 @@ func (UserManagementController) List(c *gin.Context) {
 	if reqData.BeginAt != "" {
 		var arr []interface{}
 		arr = append(arr, reqData.BeginAt)
-		whereOrder = append(whereOrder, orm.PageWhere{Where: " createAt > ? ", Value: arr})
+		whereOrder = append(whereOrder, orm.PageWhere{Where: " createdAt > ? ", Value: arr})
 	}
 	if reqData.EndAt != "" {
 		var arr []interface{}
 		arr = append(arr, reqData.EndAt)
-		whereOrder = append(whereOrder, orm.PageWhere{Where: " createAt < ? ", Value: arr})
+		whereOrder = append(whereOrder, orm.PageWhere{Where: " createdAt < ? ", Value: arr})
 	}
 	list := make([]model.AdminUser, 0)
 	var indexPage orm.IndexPage

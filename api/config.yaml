@@ -29,13 +29,13 @@ redis:
 
 
 # consul 配置
-consul: 127.0.0.1:8500
+consul: 192.168.1.228:8500
 
 # jaeger 配置
 jaeger:  127.0.0.1:6831
 
 # nsq 配置
 nsq:
-  address: 192.168.0.180:4150
-  lookup: 192.168.0.180:4161
+  address: 192.168.1.228:4150
+  lookup: 192.168.1.228:4161
   maxInFlight: 1

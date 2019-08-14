@@ -27,6 +27,8 @@ func Registersubscriber() {
 type SayHello struct{}
 
 func (s SayHello) HandleMessage(m *nsq.Message) error {
+	log.Info("读取队列")
+	//return errors.New("错误")
 	msg := service.Message{}
 	err := json.Unmarshal(m.Body, &msg)
 	if err != nil {

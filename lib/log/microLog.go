@@ -3,7 +3,7 @@ package log
 type MicroLoggerI struct {}
 
 func (o *MicroLoggerI) Log(v ...interface{}) {
-	withCaller(3).Info(v)
+	withCaller(3).Info(v...)
 }
 
 // Logf logs formatted using the default logger

@@ -124,9 +124,9 @@ func GetOne(c *gin.Context){
 			log.Warn(err)
 		}
 		if err := queue.Publish("go.micro.srv.service",body); err != nil {
-			log.Warn("[pub] 发布消息1失败： %v", err)
+			log.Warnf("[pub] 发布消息1失败： %v", err)
 		} else {
-			log.Info("[pub] 发布消息1：", string(msg.Body))
+			log.Infof("[pub] 发布消息1：%v", string(msg.Body))
 		}
 
 	}

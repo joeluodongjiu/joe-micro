@@ -86,14 +86,17 @@ func gracefulStop() {
 	var wg sync.WaitGroup
 	for _, c := range consumers {
 		wg.Add(1)
-		go func() {
+		go func(c *nsq.Consumer) {
 			c.Stop()
 			// disconnect from all lookupd
 			for _, addr := range addrNsqLookups {
-				c.DisconnectFromNSQLookupd(addr)
+				err:=c.DisconnectFromNSQLookupd(addr)
+				if err!=nil {
+					log.Error(err)
+				}
 			}
 			wg.Done()
-		}()
+		}(c)
 	}
 
 	wg.Wait()

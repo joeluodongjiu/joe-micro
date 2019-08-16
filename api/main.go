@@ -102,6 +102,7 @@ func main() {
 	r.POST("/get_one", handler.GetOne)
 	r.POST("/put_cache", handler.PutCache)
 	r.GET("/get_cache", handler.GetCache)
+	time.Now().AddDate(1,1,1)
 
 	// register html handler
 	service.Handle("/", router)

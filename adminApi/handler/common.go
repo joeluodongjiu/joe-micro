@@ -28,7 +28,7 @@ type ListReq struct {
 }
 
 func (l *ListReq) getListQuery(c *gin.Context) (err error) {
-	err = c.ShouldBind(c)
+	err = c.ShouldBind(l)
 	if err != nil {
 		return err
 	}

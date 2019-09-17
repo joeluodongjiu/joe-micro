@@ -1,4 +1,4 @@
-# 基于微服务框架go-micro 封装的微服务
+# 基于微服务框架go-micro 封装的微服务脚手架
 
 ## 服务依赖
 
@@ -44,6 +44,7 @@
     └── subscriber   //消息队列 消费者监听处理
 ```
 
+
 ## 启动项目
 cd 到对应的项目，go run main.go
 例如启动 adminApi
@@ -51,3 +52,4 @@ cd 到对应的项目，go run main.go
 $   cd  ./adminApi
 $   go run main.go
 ```
+
